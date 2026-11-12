@@ -1,0 +1,5 @@
+package com.lightword.bible.lightword_bible
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()

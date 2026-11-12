@@ -1,0 +1,274 @@
+{
+  "moods": [
+    {
+      "id": "happy",
+      "label": "Happy",
+      "emoji": "😊",
+      "colorHex": "#F59E0B",
+      "prayer": "Lord, thank You for filling my heart with joy today. Help me share this light and kindness with everyone I meet, and remind me that every good gift comes from You. Amen.",
+      "verses": [
+        {
+          "reference": "Psalm 118:24",
+          "book": "Psalms",
+          "chapter": 118,
+          "verse": 24,
+          "textWeb": "This is the day that Yahweh has made. We will rejoice and be glad in it!",
+          "textKjv": "This is the day which the LORD hath made; we will rejoice and be glad in it.",
+          "textBbe": "This is the day which the Lord has made; let us be full of joy and delight in it."
+        },
+        {
+          "reference": "Philippians 4:4",
+          "book": "Philippians",
+          "chapter": 4,
+          "verse": 4,
+          "textWeb": "Rejoice in the Lord always! Again I will say, \"Rejoice!\"",
+          "textKjv": "Rejoice in the Lord alway: and again I say, Rejoice.",
+          "textBbe": "Be glad in the Lord at all times: again I say, Be glad."
+        },
+        {
+          "reference": "James 1:17",
+          "book": "James",
+          "chapter": 1,
+          "verse": 17,
+          "textWeb": "Every good gift and every perfect gift is from above, coming down from the Father of lights, with whom can be no variation, nor turning shadow.",
+          "textKjv": "Every good gift and every perfect gift is from above, and cometh down from the Father of lights, with whom is no variableness, neither shadow of turning.",
+          "textBbe": "Every good and true gift comes down from heaven, from the Father of lights, with whom there is no change or any shade of alteration."
+        },
+        {
+          "reference": "Psalm 16:11",
+          "book": "Psalms",
+          "chapter": 16,
+          "verse": 11,
+          "textWeb": "You will show me the path of life. In your presence is fullness of joy. In your right hand there are pleasures forever more.",
+          "textKjv": "Thou wilt shew me the path of life: in thy presence is fulness of joy; at thy right hand there are pleasures for evermore.",
+          "textBbe": "You will make clear to me the way of life; where you are joy is complete; in your right hand there are pleasures for ever and ever."
+        }
+      ]
+    },
+    {
+      "id": "worried",
+      "label": "Worried",
+      "emoji": "😟",
+      "colorHex": "#D97706",
+      "prayer": "Heavenly Father, You see the anxious thoughts weighing on my mind right now. I hand every worry over to You. Replace my fear with Your quiet, unshakable peace. Amen.",
+      "verses": [
+        {
+          "reference": "Philippians 4:6-7",
+          "book": "Philippians",
+          "chapter": 4,
+          "verse": 6,
+          "textWeb": "In nothing be anxious, but in everything, by prayer and petition with thanksgiving, let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your thoughts in Christ Jesus.",
+          "textKjv": "Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus.",
+          "textBbe": "Have no cares; but in everything with prayer and praise put your requests before God. And the peace of God, which is deeper than all knowledge, will keep your hearts and minds in Christ Jesus."
+        },
+        {
+          "reference": "1 Peter 5:7",
+          "book": "1 Peter",
+          "chapter": 5,
+          "verse": 7,
+          "textWeb": "Casting all your worries on him, because he cares for you.",
+          "textKjv": "Casting all your care upon him; for he careth for you.",
+          "textBbe": "Putting all your troubles on him, for he takes care of you."
+        },
+        {
+          "reference": "Matthew 6:34",
+          "book": "Matthew",
+          "chapter": 6,
+          "verse": 34,
+          "textWeb": "Therefore don't be anxious for tomorrow, for tomorrow will be anxious for itself. Each day's own evil is sufficient.",
+          "textKjv": "Take therefore no thought for the morrow: for the morrow shall take thought for the things of itself. Sufficient unto the day is the evil thereof.",
+          "textBbe": "Take no thought then for tomorrow: for tomorrow will take thought for itself. Take the trouble of the day as it comes."
+        },
+        {
+          "reference": "John 14:27",
+          "book": "John",
+          "chapter": 14,
+          "verse": 27,
+          "textWeb": "Peace I leave with you. My peace I give to you; not as the world gives, give I to you. Don't let your heart be troubled, neither let it be fearful.",
+          "textKjv": "Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid.",
+          "textBbe": "May peace be with you; my peace I give to you: I give it not as the world gives. Let not your heart be troubled; let it be without fear."
+        }
+      ]
+    },
+    {
+      "id": "sad",
+      "label": "Sad",
+      "emoji": "😢",
+      "colorHex": "#3B82F6",
+      "prayer": "Lord, my heart feels heavy today. Draw close to me in this quiet moment, comfort my spirit, and remind me that I am never alone because You walk beside me. Amen.",
+      "verses": [
+        {
+          "reference": "Psalm 34:18",
+          "book": "Psalms",
+          "chapter": 34,
+          "verse": 18,
+          "textWeb": "Yahweh is near to those who have a broken heart, and saves those who have a crushed spirit.",
+          "textKjv": "The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit.",
+          "textBbe": "The Lord is near to the broken-hearted; he is the saviour of those whose spirits are crushed down."
+        },
+        {
+          "reference": "Psalm 147:3",
+          "book": "Psalms",
+          "chapter": 147,
+          "verse": 3,
+          "textWeb": "He heals the broken in heart, and binds up their wounds.",
+          "textKjv": "He healeth the broken in heart, and bindeth up their wounds.",
+          "textBbe": "He makes the broken-hearted well, and puts oil on their wounds."
+        },
+        {
+          "reference": "Matthew 5:4",
+          "book": "Matthew",
+          "chapter": 5,
+          "verse": 4,
+          "textWeb": "Blessed are those who mourn, for they shall be comforted.",
+          "textKjv": "Blessed are they that mourn: for they shall be comforted.",
+          "textBbe": "Happy are those who are sad: for they will be comforted."
+        },
+        {
+          "reference": "Revelation 21:4",
+          "book": "Revelation",
+          "chapter": 21,
+          "verse": 4,
+          "textWeb": "He will wipe away every tear from their eyes. Death will be no more; neither will there be mourning, nor crying, nor pain, any more.",
+          "textKjv": "And God shall wipe away all tears from their eyes; and there shall be no more death, neither sorrow, nor crying, neither shall there be any more pain.",
+          "textBbe": "And he will make dry every tear from their eyes; and there will be no more death, or sorrow, or crying, or pain."
+        }
+      ]
+    },
+    {
+      "id": "need_strength",
+      "label": "Need Strength",
+      "emoji": "💪",
+      "colorHex": "#E11D48",
+      "prayer": "Father, when my own strength runs out, be my rock and renew my energy. Give me courage to take the next step with confidence in Your power. Amen.",
+      "verses": [
+        {
+          "reference": "Philippians 4:13",
+          "book": "Philippians",
+          "chapter": 4,
+          "verse": 13,
+          "textWeb": "I can do all things through Christ, who strengthens me.",
+          "textKjv": "I can do all things through Christ which strengtheneth me.",
+          "textBbe": "I am able to do all things through him who gives me strength."
+        },
+        {
+          "reference": "Isaiah 40:31",
+          "book": "Isaiah",
+          "chapter": 40,
+          "verse": 31,
+          "textWeb": "But those who wait for Yahweh will renew their strength. They will mount up with wings like eagles. They will run, and not be weary. They will walk, and not faint.",
+          "textKjv": "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.",
+          "textBbe": "But those who are waiting for the Lord will have new strength; they will get wings like eagles: running, they will not be tired, and walking, they will have no need of rest."
+        },
+        {
+          "reference": "Joshua 1:9",
+          "book": "Joshua",
+          "chapter": 1,
+          "verse": 9,
+          "textWeb": "Haven't I commanded you? Be strong and courageous. Don't be afraid. Don't be dismayed, for Yahweh your God is with you wherever you go.",
+          "textKjv": "Have not I commanded thee? Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.",
+          "textBbe": "Have I not given you your orders? Be strong and without fear; do not bezens of heart or overcome with terror: for the Lord your God is with you wherever you go."
+        },
+        {
+          "reference": "2 Corinthians 12:9",
+          "book": "2 Corinthians",
+          "chapter": 12,
+          "verse": 9,
+          "textWeb": "He has said to me, \"My grace is sufficient for you, for my power is made perfect in weakness.\"",
+          "textKjv": "And he said unto me, My grace is sufficient for thee: for my strength is made perfect in weakness.",
+          "textBbe": "And he has said to me, My grace is enough for you, for my power is made complete in what is feeble."
+        }
+      ]
+    },
+    {
+      "id": "grateful",
+      "label": "Grateful",
+      "emoji": "🙏",
+      "colorHex": "#10B981",
+      "prayer": "Thank You, Lord, for Your faithfulness, grace, and daily blessings—both big and small. Keep my heart humble and overflowing with gratitude every day. Amen.",
+      "verses": [
+        {
+          "reference": "1 Thessalonians 5:18",
+          "book": "1 Thessalonians",
+          "chapter": 5,
+          "verse": 18,
+          "textWeb": "In everything give thanks, for this is the will of God in Christ Jesus toward you.",
+          "textKjv": "In every thing give thanks: for this is the will of God in Christ Jesus concerning you.",
+          "textBbe": "In everything give praise: for this is the purpose of God in Christ Jesus for you."
+        },
+        {
+          "reference": "Psalm 107:1",
+          "book": "Psalms",
+          "chapter": 107,
+          "verse": 1,
+          "textWeb": "Give thanks to Yahweh, for he is good, for his loving kindness endures forever.",
+          "textKjv": "O give thanks unto the LORD, for he is good: for his mercy endureth for ever.",
+          "textBbe": "O give praise to the Lord, for he is good: for his mercy is unchanging for ever."
+        },
+        {
+          "reference": "Colossians 3:15",
+          "book": "Colossians",
+          "chapter": 3,
+          "verse": 15,
+          "textWeb": "And let the peace of God rule in your hearts, to which also you were called in one body, and be thankful.",
+          "textKjv": "And let the peace of God rule in your hearts, to the which also ye are called in one body; and be ye thankful.",
+          "textBbe": "And let the peace of Christ be ruler in your hearts, as it was the purpose of God for you to be one body; and give praise to God at all times."
+        },
+        {
+          "reference": "Psalm 100:4",
+          "book": "Psalms",
+          "chapter": 100,
+          "verse": 4,
+          "textWeb": "Enter into his gates with thanksgiving, and into his courts with praise. Give thanks to him, and bless his name.",
+          "textKjv": "Enter into his gates with thanksgiving, and into his courts with praise: be thankful unto him, and bless his name.",
+          "textBbe": "Come into his gates with songs of praise, and into his house withlining of joy; give him thanks, praising his name."
+        }
+      ]
+    },
+    {
+      "id": "cant_sleep",
+      "label": "Can't Sleep / Peaceful",
+      "emoji": "🌙",
+      "colorHex": "#6366F1",
+      "prayer": "Lord, as the night grows quiet, still my racing thoughts. Watch over my home and loved ones tonight, and grant me deep, restorative sleep under Your care. Amen.",
+      "verses": [
+        {
+          "reference": "Psalm 4:8",
+          "book": "Psalms",
+          "chapter": 4,
+          "verse": 8,
+          "textWeb": "In peace I will both lay myself down and sleep, for you, Yahweh alone, make me live in safety.",
+          "textKjv": "I will both lay me down in peace, and sleep: for thou, LORD, only makest me dwell in safety.",
+          "textBbe": "In peace I will take my rest and sleep; for you, Lord, only keep me safe."
+        },
+        {
+          "reference": "Psalm 46:10",
+          "book": "Psalms",
+          "chapter": 46,
+          "verse": 10,
+          "textWeb": "\"Be still, and know that I am God. I will be exalted among the nations. I will be exalted in the earth.\"",
+          "textKjv": "Be still, and know that I am God: I will be exalted among the heathen, I will be exalted in the earth.",
+          "textBbe": "Be at peace in the knowledge that I am God: I will be lifted up among the nations, I will be lifted up in the earth."
+        },
+        {
+          "reference": "Matthew 11:28",
+          "book": "Matthew",
+          "chapter": 11,
+          "verse": 28,
+          "textWeb": "\"Come to me, all you who labor and are heavily burdened, and I will give you rest.\"",
+          "textKjv": "Come unto me, all ye that labour and are heavy laden, and I will give you rest.",
+          "textBbe": "Come to me, all you who are troubled and weighted down with care, and I will give you rest."
+        },
+        {
+          "reference": "Proverbs 3:24",
+          "book": "Proverbs",
+          "chapter": 3,
+          "verse": 24,
+          "textWeb": "When you lie down, you will not be afraid. Yes, you will lie down, and your sleep will be sweet.",
+          "textKjv": "When thou liest down, thou shalt not be afraid: yea, thou shalt lie down, and thy sleep shall be sweet.",
+          "textBbe": "When you take your rest, you will have no fear; and your sleep will be sweet on your bed."
+        }
+      ]
+    }
+  ]
+}

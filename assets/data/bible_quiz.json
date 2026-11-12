@@ -1,0 +1,304 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "difficulty": "easy",
+      "xp": 15,
+      "question": "Who led the Israelites out of slavery in Egypt?",
+      "options": ["Moses", "Abraham", "David", "Noah"],
+      "correctIndex": 0,
+      "reference": "Exodus 3:10",
+      "explanation": "God called Moses from the burning bush to lead the Israelites out of Egypt."
+    },
+    {
+      "id": "q2",
+      "difficulty": "easy",
+      "xp": 15,
+      "question": "Who built the ark to survive the great flood?",
+      "options": ["Noah", "Adam", "Jonah", "Solomon"],
+      "correctIndex": 0,
+      "reference": "Genesis 6:14",
+      "explanation": "God instructed Noah to build an ark of gopher wood to preserve his family and every kind of animal."
+    },
+    {
+      "id": "q3",
+      "difficulty": "easy",
+      "xp": 15,
+      "question": "In what town was Jesus born?",
+      "options": ["Bethlehem", "Nazareth", "Jerusalem", "Capernaum"],
+      "correctIndex": 0,
+      "reference": "Matthew 2:1",
+      "explanation": "Jesus was born in Bethlehem of Judea in the days of King Herod, fulfilling Micah's prophecy."
+    },
+    {
+      "id": "q4",
+      "difficulty": "easy",
+      "xp": 15,
+      "question": "Who defeated the giant Goliath with a sling and a stone?",
+      "options": ["David", "Saul", "Samson", "Joshua"],
+      "correctIndex": 0,
+      "reference": "1 Samuel 17:49",
+      "explanation": "Young shepherd David trusted in the Lord and struck Down the Philistine giant Goliath."
+    },
+    {
+      "id": "q5",
+      "difficulty": "easy",
+      "xp": 15,
+      "question": "What is the first book of the Bible?",
+      "options": ["Genesis", "Exodus", "Matthew", "Psalms"],
+      "correctIndex": 0,
+      "reference": "Genesis 1:1",
+      "explanation": "Genesis means 'Beginning' and opens with 'In the beginning, God created the heavens and the earth.'"
+    },
+    {
+      "id": "q6",
+      "difficulty": "easy",
+      "xp": 15,
+      "question": "Who was swallowed by a great fish when he tried to run from God's call?",
+      "options": ["Jonah", "Elijah", "Daniel", "Peter"],
+      "correctIndex": 0,
+      "reference": "Jonah 1:17",
+      "explanation": "Jonah spent three days and three nights in the belly of the great fish before preaching to Nineveh."
+    },
+    {
+      "id": "q7",
+      "difficulty": "easy",
+      "xp": 15,
+      "question": "Who was thrown into a den of lions for praying to God?",
+      "options": ["Daniel", "Joseph", "Samuel", "Ezra"],
+      "correctIndex": 0,
+      "reference": "Daniel 6:16",
+      "explanation": "God sent His angel to shut the lions' mouths so they would not hurt Daniel."
+    },
+    {
+      "id": "q8",
+      "difficulty": "easy",
+      "xp": 15,
+      "question": "How many disciples (apostles) did Jesus choose to walk closely with Him?",
+      "options": ["12", "7", "10", "40"],
+      "correctIndex": 0,
+      "reference": "Luke 6:13",
+      "explanation": "Jesus chose twelve disciples whom He also named apostles."
+    },
+    {
+      "id": "q9",
+      "difficulty": "easy",
+      "xp": 15,
+      "question": "Which psalm begins with 'The Lord is my shepherd; I shall not want'?",
+      "options": ["Psalm 23", "Psalm 1", "Psalm 91", "Psalm 119"],
+      "correctIndex": 0,
+      "reference": "Psalm 23:1",
+      "explanation": "King David wrote Psalm 23 reflecting on God's care as a Good Shepherd."
+    },
+    {
+      "id": "q10",
+      "difficulty": "easy",
+      "xp": 15,
+      "question": "What is the last book of the New Testament?",
+      "options": ["Revelation", "Jude", "Acts", "Malachi"],
+      "correctIndex": 0,
+      "reference": "Revelation 1:1",
+      "explanation": "Revelation (Apocalypse) written by John on Patmos concludes the New Testament."
+    },
+    {
+      "id": "q11",
+      "difficulty": "medium",
+      "xp": 25,
+      "question": "Which king of Israel was renowned above all others for his God-given wisdom?",
+      "options": ["Solomon", "Hezekiah", "Josiah", "Ahab"],
+      "correctIndex": 0,
+      "reference": "1 Kings 3:12",
+      "explanation": "When God offered Solomon anything, he asked for an understanding heart to govern God's people."
+    },
+    {
+      "id": "q12",
+      "difficulty": "medium",
+      "xp": 25,
+      "question": "What was the Apostle Paul's Hebrew name before his ministry to the Gentiles?",
+      "options": ["Saul", "Simon", "Barnabas", "Silas"],
+      "correctIndex": 0,
+      "reference": "Acts 13:9",
+      "explanation": "Saul of Tarsus encountered the risen Christ on the road to Damascus and became known as Paul."
+    },
+    {
+      "id": "q13",
+      "difficulty": "medium",
+      "xp": 25,
+      "question": "Where did Jesus perform His first recorded miracle of turning water into wine?",
+      "options": ["Cana of Galilee", "Bethany", "Jericho", "Sychar"],
+      "correctIndex": 0,
+      "reference": "John 2:11",
+      "explanation": "Jesus turned water into wine at a wedding feast in Cana of Galilee."
+    },
+    {
+      "id": "q14",
+      "difficulty": "medium",
+      "xp": 25,
+      "question": "Which woman of Moab stayed loyal to her mother-in-law Naomi and said, 'Your God will be my God'?",
+      "options": ["Ruth", "Esther", "Orpah", "Hannah"],
+      "correctIndex": 0,
+      "reference": "Ruth 1:16",
+      "explanation": "Ruth accompanied Naomi to Bethlehem and became the great-grandmother of King David."
+    },
+    {
+      "id": "q15",
+      "difficulty": "medium",
+      "xp": 25,
+      "question": "How many days and nights did Jesus fast in the wilderness?",
+      "options": ["40", "7", "12", "30"],
+      "correctIndex": 0,
+      "reference": "Matthew 4:2",
+      "explanation": "Jesus fasted forty days and forty nights before overcoming the temptations in the wilderness."
+    },
+    {
+      "id": "q16",
+      "difficulty": "medium",
+      "xp": 25,
+      "question": "Who climbed a sycamore tree in Jericho just to see Jesus pass by?",
+      "options": ["Zacchaeus", "Bartimaeus", "Nicodemus", "Lazarus"],
+      "correctIndex": 0,
+      "reference": "Luke 19:4",
+      "explanation": "Zacchaeus, a chief tax collector, was short in stature and climbed a sycamore tree to see Jesus."
+    },
+    {
+      "id": "q17",
+      "difficulty": "medium",
+      "xp": 25,
+      "question": "Which prophet challenged the prophets of Baal on Mount Carmel?",
+      "options": ["Elijah", "Elisha", "Isaiah", "Jeremiah"],
+      "correctIndex": 0,
+      "reference": "1 Kings 18:20",
+      "explanation": "God answered Elijah's prayer with fire from heaven on Mount Carmel."
+    },
+    {
+      "id": "q18",
+      "difficulty": "medium",
+      "xp": 25,
+      "question": "According to Galatians 5:22, what is listed first among the fruit of the Spirit?",
+      "options": ["Love", "Patience", "Faithfulness", "Self-control"],
+      "correctIndex": 0,
+      "reference": "Galatians 5:22-23",
+      "explanation": "'But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faithfulness, gentleness, and self-control.'"
+    },
+    {
+      "id": "q19",
+      "difficulty": "medium",
+      "xp": 25,
+      "question": "Who was the Jewish queen of Persia who risked her life to save her people from Haman's plot?",
+      "options": ["Esther", "Deborah", "Miriam", "Abigail"],
+      "correctIndex": 0,
+      "reference": "Esther 4:14",
+      "explanation": "Mordecai encouraged Queen Esther that she had come to the royal position 'for such a time as this.'"
+    },
+    {
+      "id": "q20",
+      "difficulty": "medium",
+      "xp": 25,
+      "question": "Which Pharisee came to visit Jesus at night to ask about God's Kingdom?",
+      "options": ["Nicodemus", "Gamaliel", "Caiaphas", "Joseph of Arimathea"],
+      "correctIndex": 0,
+      "reference": "John 3:1-2",
+      "explanation": "Jesus explained to Nicodemus what it means to be born again and spoke the words of John 3:16."
+    },
+    {
+      "id": "q21",
+      "difficulty": "hard",
+      "xp": 40,
+      "question": "Who was the oldest man recorded in the Bible, living 969 years?",
+      "options": ["Methuselah", "Enoch", "Jared", "Lamech"],
+      "correctIndex": 0,
+      "reference": "Genesis 5:27",
+      "explanation": "Methuselah, son of Enoch and grandfather of Noah, lived 969 years."
+    },
+    {
+      "id": "q22",
+      "difficulty": "hard",
+      "xp": 40,
+      "question": "On which island was the Apostle Paul shipwrecked on his voyage to Rome?",
+      "options": ["Malta", "Cyprus", "Crete", "Patmos"],
+      "correctIndex": 0,
+      "reference": "Acts 28:1",
+      "explanation": "After the shipwreck, Paul and all 276 people aboard safely reached the island of Malta (Melita)."
+    },
+    {
+      "id": "q23",
+      "difficulty": "hard",
+      "xp": 40,
+      "question": "Who was the female judge and prophetess who led Israel alongside Barak?",
+      "options": ["Deborah", "Huldah", "Jael", "Hannah"],
+      "correctIndex": 0,
+      "reference": "Judges 4:4",
+      "explanation": "Deborah held court under the Palm of Deborah and accompanied Barak to Mount Tabor."
+    },
+    {
+      "id": "q24",
+      "difficulty": "hard",
+      "xp": 40,
+      "question": "What was the name of the Babylonian king who saw the handwriting on the wall?",
+      "options": ["Belshazzar", "Nebuchadnezzar", "Cyrus", "Darius"],
+      "correctIndex": 0,
+      "reference": "Daniel 5:1-5",
+      "explanation": "Daniel interpreted the inscription 'MENE, MENE, TEKEL, UPHARSIN' for King Belshazzar."
+    },
+    {
+      "id": "q25",
+      "difficulty": "hard",
+      "xp": 40,
+      "question": "Which short New Testament letter was written by Paul to a Christian slave owner on behalf of Onesimus?",
+      "options": ["Philemon", "Titus", "2 Timothy", "3 John"],
+      "correctIndex": 0,
+      "reference": "Philemon 1:10",
+      "explanation": "Paul appealed to Philemon to welcome Onesimus back no longer as a bondservant, but as a beloved brother."
+    },
+    {
+      "id": "q26",
+      "difficulty": "hard",
+      "xp": 40,
+      "question": "Who was chosen by lot to replace Judas Iscariot among the twelve apostles?",
+      "options": ["Matthias", "Joseph Barsabbas", "Stephen", "Philip"],
+      "correctIndex": 0,
+      "reference": "Acts 1:26",
+      "explanation": "The lot fell on Matthias, and he was numbered with the eleven apostles."
+    },
+    {
+      "id": "q27",
+      "difficulty": "hard",
+      "xp": 40,
+      "question": "Which Old Testament book never explicitly mentions the name of God, yet shows His providence throughout?",
+      "options": ["Esther", "Ruth", "Obadiah", "Nahum"],
+      "correctIndex": 0,
+      "reference": "Esther 4:14",
+      "explanation": "The Book of Esther does not contain the explicit name of God, though His deliverance of Israel is central to the narrative."
+    },
+    {
+      "id": "q28",
+      "difficulty": "hard",
+      "xp": 40,
+      "question": "Who was the high priest's servant whose right ear Peter cut off and Jesus healed in Gethsemane?",
+      "options": ["Malchus", "Alexander", "Rufus", "Annas"],
+      "correctIndex": 0,
+      "reference": "John 18:10, Luke 22:51",
+      "explanation": "John identifies the servant's name as Malchus, and Luke records that Jesus touched his ear and healed him."
+    },
+    {
+      "id": "q29",
+      "difficulty": "hard",
+      "xp": 40,
+      "question": "Which king of Judah had 15 years added to his life after praying to the Lord during a fatal illness?",
+      "options": ["Hezekiah", "Uzziah", "Jehoshaphat", "Manasseh"],
+      "correctIndex": 0,
+      "reference": "2 Kings 20:5-6",
+      "explanation": "God heard Hezekiah's prayer, saw his tears, and sent Isaiah back to tell him 15 years would be added to his life."
+    },
+    {
+      "id": "q30",
+      "difficulty": "hard",
+      "xp": 40,
+      "question": "In which city were the disciples first called 'Christians'?",
+      "options": ["Antioch", "Jerusalem", "Ephesus", "Corinth"],
+      "correctIndex": 0,
+      "reference": "Acts 11:26",
+      "explanation": "Barnabas and Saul taught a great multitude in Antioch for a whole year, and the disciples were first called Christians in Antioch."
+    }
+  ]
+}

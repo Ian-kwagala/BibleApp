@@ -1,0 +1,32 @@
+name: lightword_bible
+description: "LightWord Bible — An Offline + Online Multi-Version Flutter Bible App with Interactive Features, Conflict-Free Google Drive Backup, and AdMob Monetization."
+publish_to: 'none'
+version: 2.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  shared_preferences: ^2.3.2
+  http: ^1.2.2
+  flutter_tts: ^4.0.2
+  share_plus: ^10.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/bibles/manifest.json
+    - assets/bibles/WEB/
+    - assets/bibles/KJV/
+    - assets/bibles/BBE/
+    - assets/data/mood_verses.json
+    - assets/data/reading_plans.json
+    - assets/data/bible_quiz.json

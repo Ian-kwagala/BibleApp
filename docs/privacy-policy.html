@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LightWord Bible App — Privacy Policy & Data Safety</title>
+  <style>
+    :root {
+      --bg: #FAF7F2;
+      --card: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --accent: #B45309;
+      --border: #E2E8F0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      margin: 0;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--card);
+      padding: 2.5rem;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+    h1 { color: var(--accent); margin-top: 0; }
+    h2 { margin-top: 1.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+    .badge {
+      display: inline-block;
+      background: #FEF3C7;
+      color: #92400E;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    ul { padding-left: 1.25rem; }
+    li { margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span class="badge">Zero-Server Architecture • Offline-First</span>
+    <h1>LightWord Bible App — Privacy Policy</h1>
+    <p><strong>Effective Date:</strong> November 12, 2026</p>
+    <p>
+      LightWord Bible ("we", "our", or "the App") is an offline-first multi-version Bible reader, trivia game, and study tool.
+      We operate on a <strong>Zero-Server Architecture</strong>: we do not run a proprietary backend server or central user database.
+    </p>
+
+    <h2>1. Local-First Data Storage</h2>
+    <p>
+      By default, your reading history, daily streaks, verse highlights, bookmarks, and personal study notes are stored locally on your device using encrypted/sandboxed local storage and SQLite/IndexedDB. The App functions 100% offline without requiring an account.
+    </p>
+
+    <h2>2. Optional Google Drive Personal Backup (<code>drive.appdata</code>)</h2>
+    <ul>
+      <li>If you choose to tap <strong>"Sign in with Google"</strong>, the App requests access strictly to the <code>https://www.googleapis.com/auth/drive.appdata</code> scope.</li>
+      <li>This scope only allows LightWord Bible to read and write its own hidden configuration file (<code>user_bible_sync.json</code>) inside your personal Google Drive <code>appDataFolder</code>.</li>
+      <li>LightWord Bible <strong>cannot</strong> see, access, or modify any other files, photos, or documents in your Google Drive.</li>
+      <li>We never transmit your notes, highlights, or Google account data to any developer-owned server.</li>
+    </ul>
+
+    <h2>3. In-App Data & Cloud Backup Deletion</h2>
+    <p>
+      In compliance with Google Play Data Safety requirements, you can permanently delete both your local study data and your Google Drive <code>user_bible_sync.json</code> cloud backup at any time directly inside the App by going to <strong>Versions &amp; Cloud Backup &rarr; Delete Cloud &amp; Local Data</strong>, or by disconnecting LightWord Bible in your Google Account Third-Party Connections settings.
+    </p>
+
+    <h2>4. Advertising &amp; Google UMP Consent (Google AdMob)</h2>
+    <ul>
+      <li>When your device is online, the App displays non-intrusive advertisements via <strong>Google AdMob</strong> (bottom banner, controlled chapter transition interstitials with frequency caps, and optional rewarded quiz hints).</li>
+      <li>For users in the European Economic Area (EEA), the UK, and applicable US states, we integrate the <strong>Google User Messaging Platform (UMP) SDK</strong> so you can manage or revoke your personalized ad consent at any time from the Profile/Settings screen.</li>
+    </ul>
+
+    <h2>5. Public Domain Bible Translations</h2>
+    <p>
+      LightWord Bible bundles and offers downloads exclusively for Public Domain translations, including the World English Bible (WEB), King James Version (KJV), Bible in Basic English (BBE), American Standard Version (ASV 1901), Young's Literal Translation (YLT), and Darby Translation.
+    </p>
+
+    <h2>6. Contact Us</h2>
+    <p>
+      If you have questions about this Privacy Policy, please open an issue on our official GitHub repository:
+      <a href="https://github.com/Ian-kwagala/BibleApp">https://github.com/Ian-kwagala/BibleApp</a>.
+    </p>
+  </div>
+</body>
+</html>

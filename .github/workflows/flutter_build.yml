@@ -1,0 +1,55 @@
+name: LightWord Bible — Flutter Android & Web CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Verify, Test & Build APK / AAB / Web
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17 for Android Gradle Build
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter Stable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: Verify Static Analysis
+        run: flutter analyze
+
+      - name: Run Unit Tests
+        run: flutter test
+
+      - name: Build Android Release APK
+        run: flutter build apk --release
+
+      - name: Build Android Play Store App Bundle (AAB)
+        run: flutter build appbundle --release
+
+      - name: Build Offline-First Web Bundle (PWA)
+        run: flutter build web --release
+
+      - name: Upload Android APK & Play Store AAB Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lightword-bible-android-releases
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
