@@ -12,8 +12,9 @@ class ReaderScreen extends StatefulWidget {
 }
 
 class _ReaderScreenState extends State<ReaderScreen> {
-  bool _showComparePanel = true;
-  int _compareVerseNum = 16;
+  bool _showComparePanel = false;
+  bool _showDisplaySettings = false;
+  int _compareVerseNum = 1;
 
   static const List<Map<String, String>> _highlightPalette = [
     {'name': 'Yellow', 'hex': '#FDE68A'},
@@ -86,7 +87,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                       Expanded(
                         child: Row(
                           children: [
-                            // Left column: 66 Books
                             Expanded(
                               flex: 3,
                               child: ListView.builder(
@@ -130,7 +130,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                               ),
                             ),
                             const VerticalDivider(width: 20),
-                            // Right column: Chapters Grid
                             Expanded(
                               flex: 2,
                               child: GridView.builder(
@@ -409,705 +408,814 @@ class _ReaderScreenState extends State<ReaderScreen> {
         : (appState.selectedVerseNumber ?? _compareVerseNum)
             .clamp(1, verses.length);
 
-    return Column(
-      children: [
-        // Top Reader Header matching Page 2 Mockup
-        Container(
-          padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-          decoration: const BoxDecoration(
-            color: Color(0xFFFAF7F2),
-            border: Border(
-              bottom: BorderSide(color: Color(0xFFE2E8F0)),
+    final isMidnight = appState.readerThemeMode == 'midnight';
+    final isDaylight = appState.readerThemeMode == 'daylight';
+    final readerBgColor = isMidnight
+        ? const Color(0xFF0F172A)
+        : (isDaylight ? Colors.white : const Color(0xFFFAF7F2));
+    final readerTextColor =
+        isMidnight ? const Color(0xFFF1F5F9) : const Color(0xFF1E293B);
+
+    return Container(
+      color: readerBgColor,
+      child: Column(
+        children: [
+          // Top Reader Header
+          Container(
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+            decoration: BoxDecoration(
+              color: readerBgColor,
+              border: Border(
+                bottom: BorderSide(
+                  color: isMidnight
+                      ? const Color(0xFF1E293B)
+                      : const Color(0xFFE2E8F0),
+                ),
+              ),
             ),
-          ),
-          child: Column(
-            children: [
-              // Row 1: Prev Chapter | Book & Chapter Title | Search | Next Chapter
-              Row(
-                children: [
-                  IconButton(
-                    tooltip: 'Previous Chapter',
-                    onPressed: appState.currentChapter > 1
-                        ? () => appState.loadChapter(
-                              book: appState.currentBook,
-                              chapter: appState.currentChapter - 1,
-                            )
-                        : null,
-                    icon: const Icon(Icons.chevron_left_rounded),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: InkWell(
-                        onTap: () => _openBookChapterPicker(context),
-                        borderRadius: BorderRadius.circular(10),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${appState.currentBook} ${appState.currentChapter}',
-                                style: const TextStyle(
-                                  fontFamily: 'Georgia',
-                                  fontSize: 21,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF1E293B),
+            child: Column(
+              children: [
+                // Row 1: Prev Chapter | Book & Chapter Title | Aa Display | Search | Next Chapter
+                Row(
+                  children: [
+                    IconButton(
+                      tooltip: 'Previous Chapter',
+                      onPressed: appState.currentChapter > 1
+                          ? () => appState.loadChapter(
+                                book: appState.currentBook,
+                                chapter: appState.currentChapter - 1,
+                              )
+                          : null,
+                      icon: Icon(
+                        Icons.chevron_left_rounded,
+                        color: readerTextColor,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    Expanded(
+                      child: Center(
+                        child: InkWell(
+                          onTap: () => _openBookChapterPicker(context),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '${appState.currentBook} ${appState.currentChapter}',
+                                  style: TextStyle(
+                                    fontFamily: 'Georgia',
+                                    fontSize: 20.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: readerTextColor,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 4),
-                              const Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                size: 20,
-                                color: Color(0xFF475569),
-                              ),
-                            ],
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  size: 20,
+                                  color: readerTextColor,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    tooltip: 'Search Bible Offline',
-                    onPressed: () => _openSearchModal(context),
-                    icon: const Icon(Icons.search_rounded, size: 21),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  IconButton(
-                    tooltip: 'Next Chapter',
-                    onPressed: appState.currentChapter < bookInfo.chaptersCount
-                        ? () => appState.loadChapter(
-                              book: appState.currentBook,
-                              chapter: appState.currentChapter + 1,
-                            )
-                        : null,
-                    icon: const Icon(Icons.chevron_right_rounded),
-                    visualDensity: VisualDensity.compact,
+                    IconButton(
+                      tooltip: 'Font Size & Reading Theme',
+                      onPressed: () {
+                        setState(() {
+                          _showDisplaySettings = !_showDisplaySettings;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.text_fields_rounded,
+                        size: 20,
+                        color: _showDisplaySettings
+                            ? const Color(0xFFD97706)
+                            : readerTextColor,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    IconButton(
+                      tooltip: 'Search Bible Offline',
+                      onPressed: () => _openSearchModal(context),
+                      icon: Icon(
+                        Icons.search_rounded,
+                        size: 21,
+                        color: readerTextColor,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    IconButton(
+                      tooltip: 'Next Chapter',
+                      onPressed:
+                          appState.currentChapter < bookInfo.chaptersCount
+                              ? () => appState.loadChapter(
+                                    book: appState.currentBook,
+                                    chapter: appState.currentChapter + 1,
+                                  )
+                              : null,
+                      icon: Icon(
+                        Icons.chevron_right_rounded,
+                        color: readerTextColor,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ],
+                ),
+
+                // Expandable Typography & Reading Theme Bar
+                if (_showDisplaySettings) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isMidnight
+                          ? const Color(0xFF1E293B)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFCBD5E1)),
+                    ),
+                    child: Row(
+                      children: [
+                        OutlinedButton(
+                          onPressed: () => appState.adjustReaderFontSize(-1.5),
+                          style: OutlinedButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                          ),
+                          child: const Text('A-',
+                              style: TextStyle(fontWeight: FontWeight.w800)),
+                        ),
+                        const SizedBox(width: 6),
+                        OutlinedButton(
+                          onPressed: () => appState.adjustReaderFontSize(1.5),
+                          style: OutlinedButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                          ),
+                          child: const Text('A+',
+                              style: TextStyle(fontWeight: FontWeight.w800)),
+                        ),
+                        const Spacer(),
+                        ...[
+                          {'id': 'parchment', 'label': 'Parchment'},
+                          {'id': 'daylight', 'label': 'Daylight'},
+                          {'id': 'midnight', 'label': 'Midnight'},
+                        ].map((t) {
+                          final active =
+                              appState.readerThemeMode == t['id'];
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 6),
+                            child: ChoiceChip(
+                              label: Text(t['label']!),
+                              selected: active,
+                              visualDensity: VisualDensity.compact,
+                              labelStyle: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: active
+                                    ? Colors.white
+                                    : const Color(0xFF334155),
+                              ),
+                              selectedColor: const Color(0xFF1E3A8A),
+                              onSelected: (_) =>
+                                  appState.setReaderThemeMode(t['id']!),
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 6),
 
-              // Row 2: Version Switcher Pill | Compare Versions Pill | Offline Audio Button
-              Row(
-                children: [
-                  // Version Switcher Dropdown Pill
-                  Expanded(
-                    child: Container(
-                      height: 36,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(999),
-                        border: Border.all(color: const Color(0xFFCBD5E1)),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: availableVersions.any(
-                                  (v) => v.code == appState.activeVersion)
-                              ? appState.activeVersion
-                              : 'WEB',
-                          isExpanded: true,
-                          style: const TextStyle(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF1E293B),
+                const SizedBox(height: 6),
+
+                // Row 2: Version Switcher Pill | Compare Versions Pill | Offline Audio Button
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 36,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(color: const Color(0xFFCBD5E1)),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: availableVersions.any(
+                                    (v) => v.code == appState.activeVersion)
+                                ? appState.activeVersion
+                                : 'WEB',
+                            isExpanded: true,
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF1E293B),
+                            ),
+                            items: availableVersions
+                                .map(
+                                  (v) => DropdownMenuItem<String>(
+                                    value: v.code,
+                                    child: Text(_versionDisplayLabel(v.code)),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (nextCode) {
+                              if (nextCode != null) {
+                                appState.loadChapter(
+                                  book: appState.currentBook,
+                                  chapter: appState.currentChapter,
+                                  version: nextCode,
+                                  countForAd: false,
+                                );
+                              }
+                            },
                           ),
-                          items: availableVersions
-                              .map(
-                                (v) => DropdownMenuItem<String>(
-                                  value: v.code,
-                                  child: Text(_versionDisplayLabel(v.code)),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (nextCode) {
-                            if (nextCode != null) {
-                              appState.loadChapter(
-                                book: appState.currentBook,
-                                chapter: appState.currentChapter,
-                                version: nextCode,
-                                countForAd: false,
-                              );
-                            }
-                          },
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Compare Versions Pill Button
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _showComparePanel = !_showComparePanel;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(999),
-                    child: Container(
-                      height: 36,
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: _showComparePanel
-                            ? const Color(0xFF1E3A8A)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(999),
-                        border: Border.all(
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showComparePanel = !_showComparePanel;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(999),
+                      child: Container(
+                        height: 36,
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
                           color: _showComparePanel
                               ? const Color(0xFF1E3A8A)
-                              : const Color(0xFFCBD5E1),
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: _showComparePanel
+                                ? const Color(0xFF1E3A8A)
+                                : const Color(0xFFCBD5E1),
+                          ),
+                        ),
+                        child: Text(
+                          'Compare Versions',
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                            color: _showComparePanel
+                                ? Colors.white
+                                : const Color(0xFF1E293B),
+                          ),
                         ),
                       ),
-                      child: Text(
-                        'Compare Versions',
-                        style: TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w700,
-                          color: _showComparePanel
+                    ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () {
+                        appState.ttsService.togglePlayPause(
+                          book: appState.currentBook,
+                          chapter: appState.currentChapter,
+                          verses: verses,
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(999),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: appState.ttsService.isPlaying
+                              ? const Color(0xFFD97706)
+                              : Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: const Color(0xFFCBD5E1)),
+                        ),
+                        child: Icon(
+                          appState.ttsService.isPlaying
+                              ? Icons.graphic_eq_rounded
+                              : Icons.volume_up_rounded,
+                          size: 18,
+                          color: appState.ttsService.isPlaying
                               ? Colors.white
                               : const Color(0xFF1E293B),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Offline TTS Speaker Toggle Button
-                  InkWell(
-                    onTap: () {
-                      appState.ttsService.togglePlayPause(
-                        book: appState.currentBook,
-                        chapter: appState.currentChapter,
-                        verses: verses,
-                      );
-                    },
-                    borderRadius: BorderRadius.circular(999),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: appState.ttsService.isPlaying
-                            ? const Color(0xFFD97706)
-                            : Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFCBD5E1)),
-                      ),
-                      child: Icon(
-                        appState.ttsService.isPlaying
-                            ? Icons.graphic_eq_rounded
-                            : Icons.volume_up_rounded,
-                        size: 18,
-                        color: appState.ttsService.isPlaying
-                            ? Colors.white
-                            : const Color(0xFF1E293B),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
 
-        // Main Scripture Reader Body
-        Expanded(
-          child: appState.isLoadingChapter
-              ? const Center(child: CircularProgressIndicator())
-              : Stack(
-                  children: [
-                    ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(18, 12, 18, 120),
-                      itemCount: verses.length,
-                      itemBuilder: (context, index) {
-                        final verseNum = index + 1;
-                        final verseText = verses[index];
-                        final ann = appState.getAnnotation(
-                          appState.currentBook,
-                          appState.currentChapter,
-                          verseNum,
-                        );
-                        final isSelected =
-                            appState.selectedVerseNumber == verseNum;
-                        final isTtsActive = appState.ttsService.isPlaying &&
-                            appState.ttsService.activeVerseIndex == index;
+          // Main Scripture Reader Body
+          Expanded(
+            child: appState.isLoadingChapter
+                ? const Center(child: CircularProgressIndicator())
+                : Stack(
+                    children: [
+                      ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(18, 12, 18, 110),
+                        itemCount: verses.length,
+                        itemBuilder: (context, index) {
+                          final verseNum = index + 1;
+                          final verseText = verses[index];
+                          final ann = appState.getAnnotation(
+                            appState.currentBook,
+                            appState.currentChapter,
+                            verseNum,
+                          );
+                          final isSelected =
+                              appState.selectedVerseNumber == verseNum;
+                          final isTtsActive = appState.ttsService.isPlaying &&
+                              appState.ttsService.activeVerseIndex == index;
 
-                        Color? highlightBg;
-                        if (ann?.colorHex != null) {
-                          highlightBg = _parseHex(ann!.colorHex!);
-                        } else if (isTtsActive) {
-                          highlightBg = const Color(0xFFFEF3C7);
-                        }
+                          Color? highlightBg;
+                          if (ann?.colorHex != null) {
+                            highlightBg = _parseHex(ann!.colorHex!);
+                          } else if (isTtsActive) {
+                            highlightBg = const Color(0xFFFEF3C7);
+                          }
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                appState.selectVerse(verseNum);
-                                setState(() {
-                                  _compareVerseNum = verseNum;
-                                });
-                              },
-                              borderRadius: BorderRadius.circular(10),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 160),
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 7,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: highlightBg ?? Colors.transparent,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: isSelected || isTtsActive
-                                      ? Border.all(
-                                          color: const Color(0xFFD97706),
-                                          width: 1.4,
-                                        )
-                                      : null,
-                                ),
-                                child: RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: '$verseNum ',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w800,
-                                          color: Color(0xFFB45309),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: verseText,
-                                        style: const TextStyle(
-                                          fontFamily: 'Georgia',
-                                          fontSize: 16,
-                                          height: 1.52,
-                                          color: Color(0xFF1E293B),
-                                        ),
-                                      ),
-                                      if (ann?.isBookmarked == true)
-                                        const WidgetSpan(
-                                          alignment:
-                                              PlaceholderAlignment.middle,
-                                          child: Padding(
-                                            padding: EdgeInsets.only(left: 6),
-                                            child: Icon(
-                                              Icons.bookmark_rounded,
-                                              size: 15,
-                                              color: Color(0xFFD97706),
-                                            ),
+                          final verseColor = highlightBg != null
+                              ? const Color(0xFF1E293B)
+                              : readerTextColor;
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  appState.selectVerse(verseNum);
+                                  setState(() {
+                                    _compareVerseNum = verseNum;
+                                  });
+                                },
+                                borderRadius: BorderRadius.circular(10),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 160),
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 7,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: highlightBg ?? Colors.transparent,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: isSelected || isTtsActive
+                                        ? Border.all(
+                                            color: const Color(0xFFD97706),
+                                            width: 1.4,
+                                          )
+                                        : null,
+                                  ),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: '$verseNum ',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w800,
+                                            color: Color(0xFFD97706),
                                           ),
                                         ),
+                                        TextSpan(
+                                          text: verseText,
+                                          style: TextStyle(
+                                            fontFamily: 'Georgia',
+                                            fontSize: appState.readerFontSize,
+                                            height: 1.54,
+                                            color: verseColor,
+                                          ),
+                                        ),
+                                        if (ann?.isBookmarked == true)
+                                          const WidgetSpan(
+                                            alignment:
+                                                PlaceholderAlignment.middle,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(left: 6),
+                                              child: Icon(
+                                                Icons.bookmark_rounded,
+                                                size: 15,
+                                                color: Color(0xFFD97706),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              if (ann?.note != null &&
+                                  ann!.note!.trim().isNotEmpty)
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    left: 14,
+                                    right: 6,
+                                    top: 4,
+                                    bottom: 6,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: const Color(0xFFE2E8F0),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.edit_note_rounded,
+                                        size: 17,
+                                        color: Color(0xFFB45309),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          'Note: ${ann.note}',
+                                          style: const TextStyle(
+                                            fontSize: 12.5,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFF334155),
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () =>
+                                            _openNoteDialog(context, verseNum),
+                                        child: const Icon(
+                                          Icons.edit_outlined,
+                                          size: 15,
+                                          color: Color(0xFF64748B),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ),
-                            ),
 
-                            // Inline Study Note Box matching Page 2 Mockup (under John 3:16)
-                            if (ann?.note != null &&
-                                ann!.note!.trim().isNotEmpty)
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  left: 14,
-                                  right: 6,
-                                  top: 4,
-                                  bottom: 6,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                    color: const Color(0xFFE2E8F0),
+                              if (isSelected)
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 6,
+                                    horizontal: 4,
                                   ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.edit_note_rounded,
-                                      size: 17,
-                                      color: Color(0xFFB45309),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        'Note: ${ann.note}',
-                                        style: const TextStyle(
-                                          fontSize: 12.5,
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFF334155),
-                                        ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF1E293B),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Wrap(
+                                    spacing: 8,
+                                    runSpacing: 6,
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.center,
+                                    children: [
+                                      ..._highlightPalette.map((item) {
+                                        final hex = item['hex']!;
+                                        final col = _parseHex(hex);
+                                        final isCurrentCol =
+                                            ann?.colorHex == hex;
+                                        return GestureDetector(
+                                          onTap: () {
+                                            appState.setVerseHighlightColor(
+                                              book: appState.currentBook,
+                                              chapter: appState.currentChapter,
+                                              verse: verseNum,
+                                              colorHex:
+                                                  isCurrentCol ? null : hex,
+                                            );
+                                          },
+                                          child: Container(
+                                            width: 24,
+                                            height: 24,
+                                            decoration: BoxDecoration(
+                                              color: col,
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: isCurrentCol
+                                                    ? Colors.white
+                                                    : Colors.transparent,
+                                                width: 2,
+                                              ),
+                                            ),
+                                            child: isCurrentCol
+                                                ? const Icon(
+                                                    Icons.check,
+                                                    size: 14,
+                                                    color: Color(0xFF1E293B),
+                                                  )
+                                                : null,
+                                          ),
+                                        );
+                                      }),
+                                      const SizedBox(width: 4),
+                                      _VerseActionChip(
+                                        icon: Icons.edit_note_rounded,
+                                        label: 'Note',
+                                        onTap: () =>
+                                            _openNoteDialog(context, verseNum),
                                       ),
-                                    ),
-                                    InkWell(
-                                      onTap: () =>
-                                          _openNoteDialog(context, verseNum),
-                                      child: const Icon(
-                                        Icons.edit_outlined,
-                                        size: 15,
-                                        color: Color(0xFF64748B),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                            // Inline Verse Action Bar when verse is tapped
-                            if (isSelected)
-                              Container(
-                                margin: const EdgeInsets.symmetric(
-                                  vertical: 6,
-                                  horizontal: 4,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF1E293B),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Wrap(
-                                  spacing: 8,
-                                  runSpacing: 6,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: [
-                                    // 4 Color highlight circles
-                                    ..._highlightPalette.map((item) {
-                                      final hex = item['hex']!;
-                                      final col = _parseHex(hex);
-                                      final isCurrentCol =
-                                          ann?.colorHex == hex;
-                                      return GestureDetector(
+                                      _VerseActionChip(
+                                        icon: Icons.compare_arrows_rounded,
+                                        label: 'Compare',
                                         onTap: () {
-                                          appState.setVerseHighlightColor(
+                                          setState(() {
+                                            _compareVerseNum = verseNum;
+                                            _showComparePanel = true;
+                                          });
+                                        },
+                                      ),
+                                      _VerseActionChip(
+                                        icon: Icons.palette_outlined,
+                                        label: 'Verse Art',
+                                        onTap: () {
+                                          appState.openVerseInArtStudio(
+                                            verseText: verseText,
+                                            reference:
+                                                '${appState.currentBook} ${appState.currentChapter}:$verseNum',
+                                          );
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  VerseArtStudioScreen(
+                                                appState: appState,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      _VerseActionChip(
+                                        icon: ann?.isBookmarked == true
+                                            ? Icons.bookmark_rounded
+                                            : Icons.bookmark_border_rounded,
+                                        label: 'Save',
+                                        onTap: () {
+                                          appState.toggleVerseBookmark(
                                             book: appState.currentBook,
                                             chapter: appState.currentChapter,
                                             verse: verseNum,
-                                            colorHex: isCurrentCol ? null : hex,
                                           );
                                         },
-                                        child: Container(
-                                          width: 24,
-                                          height: 24,
-                                          decoration: BoxDecoration(
-                                            color: col,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: isCurrentCol
-                                                  ? Colors.white
-                                                  : Colors.transparent,
-                                              width: 2,
-                                            ),
-                                          ),
-                                          child: isCurrentCol
-                                              ? const Icon(
-                                                  Icons.check,
-                                                  size: 14,
-                                                  color: Color(0xFF1E293B),
-                                                )
-                                              : null,
-                                        ),
-                                      );
-                                    }),
-                                    const SizedBox(width: 4),
-                                    _VerseActionChip(
-                                      icon: Icons.edit_note_rounded,
-                                      label: 'Note',
-                                      onTap: () =>
-                                          _openNoteDialog(context, verseNum),
-                                    ),
-                                    _VerseActionChip(
-                                      icon: Icons.compare_arrows_rounded,
-                                      label: 'Compare',
-                                      onTap: () {
-                                        setState(() {
-                                          _compareVerseNum = verseNum;
-                                          _showComparePanel = true;
-                                        });
-                                      },
-                                    ),
-                                    _VerseActionChip(
-                                      icon: Icons.palette_outlined,
-                                      label: 'Verse Art',
-                                      onTap: () {
-                                        appState.openVerseInArtStudio(
-                                          verseText: verseText,
-                                          reference:
-                                              '${appState.currentBook} ${appState.currentChapter}:$verseNum',
-                                        );
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                VerseArtStudioScreen(
-                                              appState: appState,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    _VerseActionChip(
-                                      icon: ann?.isBookmarked == true
-                                          ? Icons.bookmark_rounded
-                                          : Icons.bookmark_border_rounded,
-                                      label: 'Save',
-                                      onTap: () {
-                                        appState.toggleVerseBookmark(
-                                          book: appState.currentBook,
-                                          chapter: appState.currentChapter,
-                                          verse: verseNum,
-                                        );
-                                      },
-                                    ),
-                                  ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            const SizedBox(height: 4),
-                          ],
-                        );
-                      },
-                    ),
+                              const SizedBox(height: 4),
+                            ],
+                          );
+                        },
+                      ),
 
-                    // Floating Offline Audio Bar matching Page 2 Mockup
-                    Positioned(
-                      left: 16,
-                      right: 16,
-                      bottom: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.96),
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: const Color(0xFFCBD5E1)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              blurRadius: 16,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Reading ${appState.currentBook} ${appState.currentChapter}:${appState.ttsService.activeVerseIndex + 1} • Offline Voice • ${appState.ttsService.playbackRate}x',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF334155),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                IconButton(
-                                  tooltip: 'Previous Verse',
-                                  onPressed: () =>
-                                      appState.ttsService.skipPrevious(),
-                                  icon: const Icon(Icons.replay_10_rounded),
-                                  visualDensity: VisualDensity.compact,
-                                ),
-                                const SizedBox(width: 12),
-                                InkWell(
-                                  onTap: () {
-                                    appState.ttsService.togglePlayPause(
-                                      book: appState.currentBook,
-                                      chapter: appState.currentChapter,
-                                      verses: verses,
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(999),
-                                  child: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF1E293B),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      appState.ttsService.isPlaying
-                                          ? Icons.pause_rounded
-                                          : Icons.play_arrow_rounded,
-                                      color: Colors.white,
-                                      size: 24,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                IconButton(
-                                  tooltip: 'Next Verse',
-                                  onPressed: () =>
-                                      appState.ttsService.skipNext(),
-                                  icon: const Icon(Icons.forward_10_rounded),
-                                  visualDensity: VisualDensity.compact,
-                                ),
-                                const SizedBox(width: 8),
-                                OutlinedButton(
-                                  onPressed: () =>
-                                      appState.ttsService.cycleSpeed(),
-                                  style: OutlinedButton.styleFrom(
-                                    visualDensity: VisualDensity.compact,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 2,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    '${appState.ttsService.playbackRate}x',
-                                    style: const TextStyle(
-                                      fontSize: 11.5,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-        ),
-
-        // Side-by-Side Version Compare Docked Panel matching Page 2 Mockup
-        if (_showComparePanel)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(20)),
-              border: const Border(
-                top: BorderSide(color: Color(0xFFCBD5E1), width: 1.2),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 12,
-                  offset: const Offset(0, -3),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Version Compare: ${appState.currentBook} ${appState.currentChapter}:$compareVerseSafe',
-                      style: const TextStyle(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () => setState(() => _showComparePanel = false),
-                      child: const Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        size: 20,
-                        color: Color(0xFF64748B),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                FutureBuilder<Map<String, String>>(
-                  future: appState.repository.compareVerseAcrossVersions(
-                    bookName: appState.currentBook,
-                    chapterNumber: appState.currentChapter,
-                    verseNumber: compareVerseSafe,
-                  ),
-                  builder: (context, snapshot) {
-                    final data = snapshot.data ?? {};
-                    final cols = [
-                      {
-                        'code': 'KJV',
-                        'sub': 'King James\nVersion',
-                        'text': data['KJV'] ?? 'Loading...'
-                      },
-                      {
-                        'code': 'WEB',
-                        'sub': 'World English\nBible',
-                        'text': data['WEB'] ?? 'Loading...'
-                      },
-                      {
-                        'code': 'BBE',
-                        'sub': 'Bible in Basic\nEnglish',
-                        'text': data['BBE'] ?? 'Loading...'
-                      },
-                    ];
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: cols.map((col) {
-                        return Expanded(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 3),
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFAF7F2),
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: const Color(0xFFE2E8F0)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  col['code']!,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 12,
-                                    color: Color(0xFF1E3A8A),
-                                  ),
-                                ),
-                                Text(
-                                  col['sub']!,
-                                  style: const TextStyle(
-                                    fontSize: 9.5,
-                                    color: Color(0xFF64748B),
-                                    height: 1.15,
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  col['text']!,
-                                  maxLines: 4,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    height: 1.3,
-                                    color: Color(0xFF1E293B),
-                                  ),
-                                ),
-                              ],
-                            ),
+                      // Floating Offline Audio Bar
+                      Positioned(
+                        left: 16,
+                        right: 16,
+                        bottom: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
                           ),
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
-              ],
-            ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.96),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: const Color(0xFFCBD5E1)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.08),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Reading ${appState.currentBook} ${appState.currentChapter}:${appState.ttsService.activeVerseIndex + 1} • Offline Voice • ${appState.ttsService.playbackRate}x',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF334155),
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    tooltip: 'Previous Verse',
+                                    onPressed: () =>
+                                        appState.ttsService.skipPrevious(),
+                                    icon: const Icon(Icons.replay_10_rounded),
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  InkWell(
+                                    onTap: () {
+                                      appState.ttsService.togglePlayPause(
+                                        book: appState.currentBook,
+                                        chapter: appState.currentChapter,
+                                        verses: verses,
+                                      );
+                                    },
+                                    borderRadius: BorderRadius.circular(999),
+                                    child: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF1E293B),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        appState.ttsService.isPlaying
+                                            ? Icons.pause_rounded
+                                            : Icons.play_arrow_rounded,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  IconButton(
+                                    tooltip: 'Next Verse',
+                                    onPressed: () =>
+                                        appState.ttsService.skipNext(),
+                                    icon: const Icon(Icons.forward_10_rounded),
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  OutlinedButton(
+                                    onPressed: () =>
+                                        appState.ttsService.cycleSpeed(),
+                                    style: OutlinedButton.styleFrom(
+                                      visualDensity: VisualDensity.compact,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 2,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      '${appState.ttsService.playbackRate}x',
+                                      style: const TextStyle(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
           ),
-      ],
+
+          // Side-by-Side Version Compare Docked Panel
+          if (_showComparePanel)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(20)),
+                border: const Border(
+                  top: BorderSide(color: Color(0xFFCBD5E1), width: 1.2),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 12,
+                    offset: const Offset(0, -3),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Version Compare: ${appState.currentBook} ${appState.currentChapter}:$compareVerseSafe',
+                        style: const TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF1E293B),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => setState(() => _showComparePanel = false),
+                        child: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 20,
+                          color: Color(0xFF64748B),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  FutureBuilder<Map<String, String>>(
+                    future: appState.repository.compareVerseAcrossVersions(
+                      bookName: appState.currentBook,
+                      chapterNumber: appState.currentChapter,
+                      verseNumber: compareVerseSafe,
+                    ),
+                    builder: (context, snapshot) {
+                      final data = snapshot.data ?? {};
+                      final cols = [
+                        {
+                          'code': 'KJV',
+                          'sub': 'King James\nVersion',
+                          'text': data['KJV'] ?? 'Loading...'
+                        },
+                        {
+                          'code': 'WEB',
+                          'sub': 'World English\nBible',
+                          'text': data['WEB'] ?? 'Loading...'
+                        },
+                        {
+                          'code': 'BBE',
+                          'sub': 'Bible in Basic\nEnglish',
+                          'text': data['BBE'] ?? 'Loading...'
+                        },
+                      ];
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: cols.map((col) {
+                          return Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 3),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFAF7F2),
+                                borderRadius: BorderRadius.circular(10),
+                                border:
+                                    Border.all(color: const Color(0xFFE2E8F0)),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    col['code']!,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 12,
+                                      color: Color(0xFF1E3A8A),
+                                    ),
+                                  ),
+                                  Text(
+                                    col['sub']!,
+                                    style: const TextStyle(
+                                      fontSize: 9.5,
+                                      color: Color(0xFF64748B),
+                                      height: 1.15,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    col['text']!,
+                                    maxLines: 4,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      height: 1.3,
+                                      color: Color(0xFF1E293B),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/bible_models.dart';
 import '../state/app_state.dart';
@@ -13,6 +14,7 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
+  final Random _random = Random();
   String _selectedDifficulty = 'all'; // all, easy, medium, hard
   int _questionCursor = 0;
   int? _selectedOptionIndex;
@@ -20,21 +22,43 @@ class _QuizScreenState extends State<QuizScreen> {
   bool _isWatchingRewardedAd = false;
   int _rewardedCountdown = 3;
 
+  // Shuffled option state for the active question so the correct answer is never fixed at index 0
+  String? _preparedQuestionId;
+  List<String> _shuffledOptions = [];
+  int _shuffledCorrectIndex = 0;
+
   List<QuizQuestion> _filteredQuestions() {
     final all = widget.appState.repository.quizQuestions;
     if (_selectedDifficulty == 'all') return all;
     return all.where((q) => q.difficulty == _selectedDifficulty).toList();
   }
 
-  void _nextQuestion(int totalCount) {
+  void _ensureShuffledQuestion(QuizQuestion q, {bool forceReshuffle = false}) {
+    if (!forceReshuffle &&
+        _preparedQuestionId == q.id &&
+        _shuffledOptions.length == q.options.length) {
+      return;
+    }
+    final correctText = q.options[q.correctIndex];
+    final indices = List<int>.generate(q.options.length, (i) => i)
+      ..shuffle(_random);
+    _shuffledOptions = indices.map((i) => q.options[i]).toList();
+    _shuffledCorrectIndex = _shuffledOptions.indexOf(correctText);
+    _preparedQuestionId = q.id;
+  }
+
+  void _nextQuestion(List<QuizQuestion> questions) {
     setState(() {
-      _questionCursor = (_questionCursor + 1) % totalCount;
+      _questionCursor = (_questionCursor + 1) % questions.length;
       _selectedOptionIndex = null;
       _hiddenOptionIndices.clear();
+      _preparedQuestionId = null;
+      final nextQ = questions[_questionCursor % questions.length];
+      _ensureShuffledQuestion(nextQ, forceReshuffle: true);
     });
   }
 
-  Future<void> _watchAdFor5050Hint(QuizQuestion currentQ) async {
+  Future<void> _watchAdFor5050Hint() async {
     if (!widget.appState.isPhoneOnline) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -57,14 +81,13 @@ class _QuizScreenState extends State<QuizScreen> {
     }
 
     if (!mounted) return;
-    // Eliminate 2 wrong options
     final wrongIndices = <int>[];
-    for (var i = 0; i < currentQ.options.length; i++) {
-      if (i != currentQ.correctIndex) {
+    for (var i = 0; i < _shuffledOptions.length; i++) {
+      if (i != _shuffledCorrectIndex) {
         wrongIndices.add(i);
       }
     }
-    wrongIndices.shuffle();
+    wrongIndices.shuffle(_random);
 
     setState(() {
       _isWatchingRewardedAd = false;
@@ -80,7 +103,13 @@ class _QuizScreenState extends State<QuizScreen> {
       return const Center(child: CircularProgressIndicator());
     }
     final currentQ = questions[_questionCursor % questions.length];
-    final levelNum = (appState.xp ~/ 150) + 1;
+    _ensureShuffledQuestion(currentQ);
+
+    final accuracyPct = appState.quizTotalAttempted == 0
+        ? 0
+        : ((appState.quizTotalCorrect / appState.quizTotalAttempted) * 100)
+            .round();
+    const optionLetters = ['A', 'B', 'C', 'D'];
 
     return Container(
       width: double.infinity,
@@ -102,22 +131,35 @@ class _QuizScreenState extends State<QuizScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Top Header matching Page 3 Left Mockup
+                // Top Header with Level & Glowing XP Badge
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Daily Bible Trivia • Level $levelNum',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.5,
-                        fontWeight: FontWeight.w800,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Daily Bible Trivia • Level ${appState.userLevel}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Question ${(_questionCursor % questions.length) + 1} of ${questions.length} • Shuffled Challenge',
+                          style: const TextStyle(
+                            color: Color(0xFF94A3B8),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
-                    // Glowing XP Circle Badge
                     Container(
-                      width: 54,
-                      height: 54,
+                      width: 56,
+                      height: 56,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
@@ -144,7 +186,7 @@ class _QuizScreenState extends State<QuizScreen> {
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w900,
-                              fontSize: 13.5,
+                              fontSize: 14,
                               height: 1.0,
                             ),
                           ),
@@ -161,14 +203,45 @@ class _QuizScreenState extends State<QuizScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 14),
+
+                // Live Session Scoreboard Bar (Starts cleanly from 0)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.07),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.12),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _QuizStatPill(
+                        label: 'Score',
+                        value:
+                            '${appState.quizTotalCorrect}/${appState.quizTotalAttempted}',
+                      ),
+                      _QuizStatPill(
+                        label: 'Accuracy',
+                        value: '$accuracyPct%',
+                      ),
+                      _QuizStatPill(
+                        label: 'Hot Streak',
+                        value: '${appState.currentQuizStreak} 🔥',
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 12),
 
                 // Difficulty Filter Chips
                 Row(
                   children: ['all', 'easy', 'medium', 'hard'].map((diff) {
                     final active = _selectedDifficulty == diff;
-                    final label =
-                        diff[0].toUpperCase() + diff.substring(1);
+                    final label = diff[0].toUpperCase() + diff.substring(1);
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: ChoiceChip(
@@ -177,7 +250,8 @@ class _QuizScreenState extends State<QuizScreen> {
                         selectedColor: const Color(0xFFD97706),
                         backgroundColor: const Color(0xFF1E293B),
                         labelStyle: TextStyle(
-                          color: active ? Colors.white : const Color(0xFFCBD5E1),
+                          color:
+                              active ? Colors.white : const Color(0xFFCBD5E1),
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
                         ),
@@ -187,6 +261,7 @@ class _QuizScreenState extends State<QuizScreen> {
                             _questionCursor = 0;
                             _selectedOptionIndex = null;
                             _hiddenOptionIndices.clear();
+                            _preparedQuestionId = null;
                           });
                         },
                       ),
@@ -195,10 +270,10 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // White Question Card matching Page 3 Left Mockup
+                // White Question Card
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 22, vertical: 28),
+                      const EdgeInsets.symmetric(horizontal: 22, vertical: 26),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(22),
@@ -235,7 +310,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         currentQ.question,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 19,
+                          fontSize: 18.5,
                           fontWeight: FontWeight.w800,
                           color: Color(0xFF0F172A),
                           height: 1.35,
@@ -246,29 +321,36 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
                 const SizedBox(height: 18),
 
-                // 4 Multiple Choice Option Buttons
-                ...List.generate(currentQ.options.length, (optIdx) {
+                // 4 Shuffled Multiple Choice Option Buttons with A/B/C/D Badges
+                ...List.generate(_shuffledOptions.length, (optIdx) {
                   if (_hiddenOptionIndices.contains(optIdx)) {
                     return const SizedBox.shrink();
                   }
-                  final optionText = currentQ.options[optIdx];
+                  final optionText = _shuffledOptions[optIdx];
                   final hasAnswered = _selectedOptionIndex != null;
-                  final isCorrect = optIdx == currentQ.correctIndex;
+                  final isCorrect = optIdx == _shuffledCorrectIndex;
                   final isChosen = _selectedOptionIndex == optIdx;
+                  final letter = optionLetters[optIdx % optionLetters.length];
 
                   Color bgColor = Colors.white;
                   Color textColor = const Color(0xFF0F172A);
+                  Color badgeBg = const Color(0xFFF1F5F9);
+                  Color badgeText = const Color(0xFF475569);
                   IconData? trailingIcon;
 
                   if (hasAnswered) {
                     if (isCorrect) {
-                      bgColor = const Color(0xFF10B981); // Emerald Green
+                      bgColor = const Color(0xFF10B981);
                       textColor = Colors.white;
-                      trailingIcon = Icons.check_rounded;
+                      badgeBg = Colors.white.withValues(alpha: 0.22);
+                      badgeText = Colors.white;
+                      trailingIcon = Icons.check_circle_rounded;
                     } else if (isChosen) {
-                      bgColor = const Color(0xFFEF4444); // Red
+                      bgColor = const Color(0xFFEF4444);
                       textColor = Colors.white;
-                      trailingIcon = Icons.close_rounded;
+                      badgeBg = Colors.white.withValues(alpha: 0.22);
+                      badgeText = Colors.white;
+                      trailingIcon = Icons.cancel_rounded;
                     }
                   }
 
@@ -291,8 +373,8 @@ class _QuizScreenState extends State<QuizScreen> {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 16,
+                          horizontal: 16,
+                          vertical: 14,
                         ),
                         decoration: BoxDecoration(
                           color: bgColor,
@@ -306,30 +388,41 @@ class _QuizScreenState extends State<QuizScreen> {
                           ],
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const SizedBox(width: 22),
+                            Container(
+                              width: 30,
+                              height: 30,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: badgeBg,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                letter,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 13,
+                                  color: badgeText,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 optionText,
-                                textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 15.5,
                                   fontWeight: FontWeight.w700,
                                   color: textColor,
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              width: 22,
-                              child: trailingIcon != null
-                                  ? Icon(
-                                      trailingIcon,
-                                      color: Colors.white,
-                                      size: 22,
-                                    )
-                                  : null,
-                            ),
+                            if (trailingIcon != null)
+                              Icon(
+                                trailingIcon,
+                                color: Colors.white,
+                                size: 22,
+                              ),
                           ],
                         ),
                       ),
@@ -353,21 +446,26 @@ class _QuizScreenState extends State<QuizScreen> {
                         Row(
                           children: [
                             Icon(
-                              _selectedOptionIndex == currentQ.correctIndex
+                              _selectedOptionIndex == _shuffledCorrectIndex
                                   ? Icons.check_circle_rounded
                                   : Icons.info_rounded,
-                              color: _selectedOptionIndex == currentQ.correctIndex
-                                  ? const Color(0xFF34D399)
-                                  : const Color(0xFFFBBF24),
+                              color:
+                                  _selectedOptionIndex == _shuffledCorrectIndex
+                                      ? const Color(0xFF34D399)
+                                      : const Color(0xFFFBBF24),
                               size: 20,
                             ),
                             const SizedBox(width: 8),
-                            Text(
-                              'Scripture Reference: ${currentQ.reference}',
-                              style: const TextStyle(
-                                color: Color(0xFFFDE047),
-                                fontWeight: FontWeight.w700,
-                                fontSize: 13.5,
+                            Expanded(
+                              child: Text(
+                                _selectedOptionIndex == _shuffledCorrectIndex
+                                    ? 'Correct! +${currentQ.xp} XP • ${currentQ.reference}'
+                                    : 'Scripture Reference: ${currentQ.reference}',
+                                style: const TextStyle(
+                                  color: Color(0xFFFDE047),
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 13.5,
+                                ),
                               ),
                             ),
                           ],
@@ -385,9 +483,9 @@ class _QuizScreenState extends State<QuizScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
-                            onPressed: () => _nextQuestion(questions.length),
+                            onPressed: () => _nextQuestion(questions),
                             icon: const Icon(Icons.arrow_forward_rounded),
-                            label: const Text('Next Trivia Question'),
+                            label: const Text('Next Shuffled Question'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF10B981),
                               foregroundColor: Colors.white,
@@ -405,9 +503,9 @@ class _QuizScreenState extends State<QuizScreen> {
 
                 const SizedBox(height: 12),
 
-                // Gold Rewarded Video Ad Button matching Page 3 Left Mockup & Offline Rule
+                // Gold Rewarded Video Ad Button
                 InkWell(
-                  onTap: () => _watchAdFor5050Hint(currentQ),
+                  onTap: _watchAdFor5050Hint,
                   borderRadius: BorderRadius.circular(16),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -467,7 +565,6 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
           ),
 
-          // Simulated Rewarded Ad Overlay
           if (_isWatchingRewardedAd)
             Container(
               color: Colors.black.withValues(alpha: 0.85),
@@ -516,6 +613,38 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
         ],
       ),
+    );
+  }
+}
+
+class _QuizStatPill extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _QuizStatPill({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+            fontSize: 14.5,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Color(0xFF94A3B8),
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }

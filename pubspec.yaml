@@ -23,6 +23,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/icon/app_icon.png
     - assets/bibles/manifest.json
     - assets/bibles/WEB/
     - assets/bibles/KJV/

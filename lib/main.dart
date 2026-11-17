@@ -53,22 +53,43 @@ class _LightWordBibleAppState extends State<LightWordBibleApp> {
           ),
           home: _appState.isInitialized
               ? MainShellScreen(appState: _appState)
-              : const Scaffold(
-                  backgroundColor: Color(0xFFFAF7F2),
+              : Scaffold(
+                  backgroundColor: const Color(0xFF0F172A),
                   body: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircularProgressIndicator(color: Color(0xFFD97706)),
-                        SizedBox(height: 16),
-                        Text(
-                          'Loading LightWord Bible Offline Library...',
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: Image.asset(
+                            'assets/icon/app_icon.png',
+                            width: 96,
+                            height: 96,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'LightWord Bible',
                           style: TextStyle(
                             fontFamily: 'Georgia',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF1E293B),
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
                           ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Loading Offline Multi-Version Library...',
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF94A3B8),
+                          ),
+                        ),
+                        const SizedBox(height: 22),
+                        const CircularProgressIndicator(
+                          color: Color(0xFFF59E0B),
                         ),
                       ],
                     ),

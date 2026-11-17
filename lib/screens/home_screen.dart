@@ -38,6 +38,14 @@ class _HomeScreenState extends State<HomeScreen> {
       'text':
           'For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.',
     },
+    {
+      'ref': 'Isaiah 40:31',
+      'book': 'Isaiah',
+      'chapter': 40,
+      'verse': 31,
+      'text':
+          'But those who wait for Yahweh will renew their strength. They will mount up with wings like eagles.',
+    },
   ];
 
   int _dailyVerseIndex = 0;
@@ -88,26 +96,62 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(18, 12, 18, 28),
+      padding: const EdgeInsets.fromLTRB(18, 14, 18, 28),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top App Header matching Page 1 Mockup
+          // Top Professional Brand Bar with Custom Icon Emblem
           Row(
             children: [
-              const Expanded(
-                child: Text(
-                  'LightWord Bible',
-                  style: TextStyle(
-                    fontFamily: 'Georgia',
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF1E293B),
-                    letterSpacing: -0.4,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  'assets/icon/app_icon.png',
+                  width: 42,
+                  height: 42,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E3A8A),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.menu_book_rounded,
+                      color: Color(0xFFFDE047),
+                      size: 22,
+                    ),
                   ),
                 ),
               ),
-              // Streak pill badge
+              const SizedBox(width: 11),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'LightWord Bible',
+                      style: TextStyle(
+                        fontFamily: 'Georgia',
+                        fontSize: 21,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF0F172A),
+                        letterSpacing: -0.4,
+                      ),
+                    ),
+                    Text(
+                      'Offline Multi-Version Study & Devotional',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF64748B),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Streak pill badge (starts at 0 and grows with daily activity)
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
@@ -122,40 +166,143 @@ class _HomeScreenState extends State<HomeScreen> {
                     const Icon(
                       Icons.local_fire_department_rounded,
                       color: Color(0xFFD97706),
-                      size: 18,
+                      size: 17,
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '${appState.streakDays} Day Streak',
+                      '${appState.streakDays}d Streak',
                       style: const TextStyle(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
                         color: Color(0xFF92400E),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              // Profile avatar button -> jumps to Versions & Cloud Backup
-              InkWell(
-                onTap: () => appState.setTabIndex(3),
-                borderRadius: BorderRadius.circular(999),
-                child: CircleAvatar(
-                  radius: 18,
-                  backgroundColor: const Color(0xFFD97706),
-                  child: Text(
-                    appState.googleUserName.substring(0, 1),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 16),
+
+          // Professional User Progress & Study Stats Card (Starts cleanly from 0)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0F172A),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0F172A).withValues(alpha: 0.14),
+                  blurRadius: 14,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                        ),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        'LEVEL ${appState.userLevel}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF0F172A),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${appState.xp} Total XP',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12.5,
+                                ),
+                              ),
+                              Text(
+                                '${appState.xpIntoCurrentLevel} / 100 XP to Level ${appState.userLevel + 1}',
+                                style: const TextStyle(
+                                  color: Color(0xFF94A3B8),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(999),
+                            child: LinearProgressIndicator(
+                              value: appState.levelProgressFraction,
+                              minHeight: 6,
+                              backgroundColor: const Color(0xFF334155),
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                Color(0xFFFBBF24),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Divider(height: 1, color: Color(0xFF1E293B)),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _StatCounterItem(
+                      label: 'Highlights',
+                      value: '${appState.highlightsCount}',
+                      icon: Icons.format_color_fill_rounded,
+                      color: const Color(0xFFFBBF24),
+                    ),
+                    _StatCounterItem(
+                      label: 'Study Notes',
+                      value: '${appState.notesCount}',
+                      icon: Icons.edit_note_rounded,
+                      color: const Color(0xFF60A5FA),
+                    ),
+                    _StatCounterItem(
+                      label: 'Bookmarks',
+                      value: '${appState.bookmarksCount}',
+                      icon: Icons.bookmark_rounded,
+                      color: const Color(0xFF34D399),
+                    ),
+                    _StatCounterItem(
+                      label: 'Quiz Solved',
+                      value: '${appState.quizTotalCorrect}',
+                      icon: Icons.emoji_events_rounded,
+                      color: const Color(0xFFC084FC),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 18),
 
           // Section Header: Verse of the Day
           Row(
@@ -165,8 +312,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Verse of the Day',
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF1E293B),
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF0F172A),
                 ),
               ),
               TextButton.icon(
@@ -177,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 },
                 icon: const Icon(Icons.refresh_rounded, size: 16),
-                label: const Text('Next Verse'),
+                label: const Text('Inspire Me'),
                 style: TextButton.styleFrom(
                   foregroundColor: const Color(0xFFB45309),
                   visualDensity: VisualDensity.compact,
@@ -191,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(22),
               gradient: const LinearGradient(
                 begin: Alignment.topRight,
                 end: Alignment.bottomLeft,
@@ -213,7 +360,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: Stack(
               children: [
-                // Subtle sun glow ornament in top-right corner
                 Positioned(
                   top: -25,
                   right: -15,
@@ -236,16 +382,40 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        currentDaily['ref'] as String,
-                        style: const TextStyle(
-                          color: Color(0xFFFEF3C7),
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.3,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 9,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.25),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              currentDaily['ref'] as String,
+                              style: const TextStyle(
+                                color: Color(0xFFFEF3C7),
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          const Text(
+                            'TAP VERSE TO READ',
+                            style: TextStyle(
+                              color: Color(0xFFFDE68A),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 14),
                       GestureDetector(
                         onTap: () {
                           appState.loadChapter(
@@ -260,8 +430,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: const TextStyle(
                             fontFamily: 'Georgia',
                             color: Colors.white,
-                            fontSize: 21,
-                            height: 1.38,
+                            fontSize: 20.5,
+                            height: 1.4,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -269,7 +439,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 20),
                       Row(
                         children: [
-                          // Share Image button -> opens Verse Art Studio
                           Expanded(
                             child: OutlinedButton.icon(
                               onPressed: () {
@@ -294,7 +463,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 'Share Image',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                               style: OutlinedButton.styleFrom(
@@ -312,7 +481,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          // Bookmark button
                           Expanded(
                             child: OutlinedButton.icon(
                               onPressed: () {
@@ -335,7 +503,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 isDailyBookmarked ? 'Bookmarked' : 'Bookmark',
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                               style: OutlinedButton.styleFrom(
@@ -360,9 +528,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 20),
 
-          // Mood Verse Finder Section matching Page 1 Mockup
+          // Mood Verse Finder Section
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -385,15 +553,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   'How are you feeling today?',
                   style: TextStyle(
                     fontSize: 15.5,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1E293B),
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF0F172A),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 const Text(
-                  'Tap any mood chip for comforting verses & a short prayer',
+                  'Select an emotion for curated Scripture promises & a guided prayer',
                   style: TextStyle(
-                    fontSize: 12.5,
+                    fontSize: 12,
                     color: Color(0xFF64748B),
                   ),
                 ),
@@ -414,13 +582,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 180),
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
+                          horizontal: 13,
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
                               ? chipColor
-                              : chipColor.withValues(alpha: 0.14),
+                              : chipColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(999),
                           border: Border.all(
                             color: isSelected
@@ -440,7 +608,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               mood.label,
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 12.5,
                                 fontWeight: FontWeight.w700,
                                 color: isSelected
                                     ? Colors.white
@@ -453,8 +621,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }).toList(),
                 ),
-
-                // Expanded Mood Verses & Prayer Card when a mood is tapped
                 if (activeMood != null) ...[
                   const SizedBox(height: 16),
                   Container(
@@ -472,15 +638,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              '${activeMood.emoji} Comfort for When You Feel ${activeMood.label}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 14,
-                                color: Color(0xFF1E293B),
+                            Expanded(
+                              child: Text(
+                                '${activeMood.emoji} Scripture Comfort for ${activeMood.label}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 14,
+                                  color: Color(0xFF1E293B),
+                                ),
                               ),
                             ),
-                            const Spacer(),
                             IconButton(
                               onPressed: () =>
                                   setState(() => _selectedMoodId = null),
@@ -492,7 +659,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFEF3C7).withValues(alpha: 0.65),
+                            color: const Color(0xFFFEF3C7)
+                                .withValues(alpha: 0.65),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Row(
@@ -506,7 +674,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Short Prayer: "${activeMood.prayer}"',
+                                  'Prayer: "${activeMood.prayer}"',
                                   style: const TextStyle(
                                     fontSize: 12.5,
                                     fontStyle: FontStyle.italic,
@@ -545,7 +713,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Text(
                                         '${v.reference} (${appState.activeVersion})',
                                         style: const TextStyle(
-                                          fontWeight: FontWeight.w700,
+                                          fontWeight: FontWeight.w800,
                                           fontSize: 13,
                                           color: Color(0xFFB45309),
                                         ),
@@ -576,7 +744,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 'Art Card',
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
+                                                  fontWeight: FontWeight.w700,
                                                   color: Color(0xFF1E3A8A),
                                                 ),
                                               ),
@@ -598,10 +766,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 vertical: 2,
                                               ),
                                               child: Text(
-                                                'Open Chapter →',
+                                                'Read Chapter →',
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                  fontWeight: FontWeight.w700,
+                                                  fontWeight: FontWeight.w800,
                                                   color: Color(0xFFB45309),
                                                 ),
                                               ),
@@ -635,7 +803,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 18),
 
-          // Continue Reading Plan Card matching Page 1 Mockup
+          // Guided Reading Plan Card (Starts cleanly at 0% / Day 1 of 30)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -658,11 +826,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Continue Reading Plan',
+                      'Guided Reading Plan',
                       style: TextStyle(
                         fontSize: 15.5,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1E293B),
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF0F172A),
                       ),
                     ),
                     DropdownButtonHideUnderline(
@@ -671,7 +839,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         isDense: true,
                         style: const TextStyle(
                           fontSize: 12.5,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w800,
                           color: Color(0xFFB45309),
                         ),
                         items: appState.repository.readingPlans
@@ -698,9 +866,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${activePlan.title} (Day $nextDayNum/${activePlan.totalDays})',
+                      '${activePlan.title} (${completedDays.length}/${activePlan.totalDays} Days Completed)',
                       style: const TextStyle(
-                        fontSize: 13.5,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF475569),
                       ),
@@ -733,10 +901,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Next: ${nextPlanDay.book} ${nextPlanDay.chapter} • ${nextPlanDay.title}',
+                        'Day $nextDayNum: ${nextPlanDay.book} ${nextPlanDay.chapter} • ${nextPlanDay.title}',
                         style: const TextStyle(
                           fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                           color: Color(0xFF334155),
                         ),
                       ),
@@ -755,7 +923,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         appState.setTabIndex(1);
                       },
                       icon: const Icon(Icons.menu_book_rounded, size: 16),
-                      label: const Text('Read Now'),
+                      label: Text(
+                        completedDays.isEmpty ? 'Start Day 1' : 'Read Next',
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1E3A8A),
                         foregroundColor: Colors.white,
@@ -775,14 +945,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 18),
 
-          // Quick Actions Row: Bible Trivia Quiz + Verse Art Studio + Bookmarks
+          // Quick Actions Row
           Row(
             children: [
               Expanded(
                 child: _QuickFeatureTile(
                   icon: Icons.emoji_events_rounded,
-                  title: 'Bible Quiz',
-                  subtitle: '${appState.xp} XP • Daily Trivia',
+                  title: 'Bible Trivia Quiz',
+                  subtitle: '${appState.xp} XP • Shuffled Challenges',
                   color: const Color(0xFF4F46E5),
                   onTap: () => appState.setTabIndex(2),
                 ),
@@ -792,7 +962,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _QuickFeatureTile(
                   icon: Icons.palette_rounded,
                   title: 'Verse Art Studio',
-                  subtitle: 'Share HD Cards',
+                  subtitle: 'Create HD Cards',
                   color: const Color(0xFF059669),
                   onTap: () {
                     Navigator.of(context).push(
@@ -809,6 +979,52 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _StatCounterItem extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _StatCounterItem({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 15, color: color),
+            const SizedBox(width: 4),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 15,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Color(0xFF94A3B8),
+            fontSize: 10.5,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -858,9 +1074,9 @@ class _QuickFeatureTile extends StatelessWidget {
                   Text(
                     title,
                     style: const TextStyle(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w800,
                       fontSize: 13.5,
-                      color: Color(0xFF1E293B),
+                      color: Color(0xFF0F172A),
                     ),
                   ),
                   const SizedBox(height: 2),

@@ -402,9 +402,9 @@ class UserSyncPayload {
     }
 
     return UserSyncPayload(
-      streakDays: json['streakDays'] as int? ?? 14,
+      streakDays: json['streakDays'] as int? ?? 0,
       lastActiveDate: json['lastActiveDate'] as String? ?? '',
-      xp: json['xp'] as int? ?? 450,
+      xp: json['xp'] as int? ?? 0,
       activeVersion: json['activeVersion'] as String? ?? 'WEB',
       lastBook: json['lastBook'] as String? ?? 'John',
       lastChapter: json['lastChapter'] as int? ?? 3,

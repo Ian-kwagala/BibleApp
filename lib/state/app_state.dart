@@ -12,15 +12,17 @@ class AppState extends ChangeNotifier {
   SharedPreferences? _prefs;
 
   bool isInitialized = false;
-  int currentTabIndex = 0; // 0: Home, 1: Read, 2: Quiz, 3: Versions, 4: Profile/Studio
+  int currentTabIndex = 0; // 0: Home, 1: Read, 2: Quiz, 3: Versions, 4: Art Studio
 
   // Reader state
   String activeVersion = 'WEB';
   String currentBook = 'John';
-  int currentChapter = 3;
+  int currentChapter = 1;
   List<String> currentChapterVerses = [];
   bool isLoadingChapter = false;
-  int? selectedVerseNumber; // 1-indexed selected verse for toolbar/compare
+  int? selectedVerseNumber;
+  double readerFontSize = 16.5;
+  String readerThemeMode = 'parchment'; // parchment, daylight, midnight
 
   // Dwell-time tracking for Blueprint v2.0 Fix #6 (AdMob Accidental Click Prevention)
   DateTime _chapterOpenedAt = DateTime.now();
@@ -32,19 +34,22 @@ class AppState extends ChangeNotifier {
   // Connectivity & AdMob state
   bool isPhoneOnline = true;
 
-  // Google Sign-In & Drive appDataFolder Sync state (Blueprint v2.0 Fix #3)
-  bool isSignedInWithGoogle = true;
+  // Google Sign-In & Drive appDataFolder Sync state (starts unsigned-in, local-first)
+  bool isSignedInWithGoogle = false;
   String googleUserEmail = 'reader@gmail.com';
-  String googleUserName = 'Grace Walker';
-  String lastBackupLabel = 'Just now';
+  String googleUserName = 'Bible Reader';
+  String lastBackupLabel = 'Not synced yet';
   bool isSyncingDrive = false;
   int pendingSyncChanges = 0;
   Timer? _debounceSyncTimer;
 
-  // Study & Habit state
-  int streakDays = 14;
+  // Study & Habit state — starts cleanly from ZERO for new users
+  int streakDays = 0;
   String lastActiveDate = '';
-  int xp = 450;
+  int xp = 0;
+  int quizTotalAttempted = 0;
+  int quizTotalCorrect = 0;
+  int currentQuizStreak = 0;
   Map<String, VerseAnnotation> annotations = {};
   Map<String, List<int>> completedPlanDays = {};
   List<String> answeredQuizIds = [];
@@ -65,12 +70,25 @@ class AppState extends ChangeNotifier {
     ttsService = TtsService(onStateChanged: notifyListeners);
   }
 
+  int get userLevel => (xp ~/ 100) + 1;
+  int get xpIntoCurrentLevel => xp % 100;
+  double get levelProgressFraction => (xp % 100) / 100.0;
+
+  int get highlightsCount => annotations.values
+      .where((a) => a.colorHex != null && a.colorHex!.isNotEmpty)
+      .length;
+  int get notesCount => annotations.values
+      .where((a) => a.note != null && a.note!.trim().isNotEmpty)
+      .length;
+  int get bookmarksCount =>
+      annotations.values.where((a) => a.isBookmarked).length;
+
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
     await repository.initialize(_prefs!);
 
-    // Load local saved state or initialize blueprint default state
-    final savedJson = _prefs!.getString('lw_user_sync_payload_v2');
+    // Load local saved state or initialize clean zero-state
+    final savedJson = _prefs!.getString('lw_user_sync_payload_v3');
     if (savedJson != null && savedJson.isNotEmpty) {
       try {
         final payload = UserSyncPayload.fromJson(
@@ -78,15 +96,19 @@ class AppState extends ChangeNotifier {
         );
         _applyPayload(payload);
       } catch (_) {
-        _seedInitialBlueprintState();
+        _resetToZeroState();
       }
     } else {
-      _seedInitialBlueprintState();
+      _resetToZeroState();
       await _persistLocalState();
     }
 
     isPhoneOnline = _prefs!.getBool('lw_is_online') ?? true;
-    isSignedInWithGoogle = _prefs!.getBool('lw_google_signed_in') ?? true;
+    isSignedInWithGoogle = _prefs!.getBool('lw_google_signed_in_v3') ?? false;
+    readerFontSize = _prefs!.getDouble('lw_reader_font_size') ?? 16.5;
+    readerThemeMode = _prefs!.getString('lw_reader_theme') ?? 'parchment';
+    quizTotalAttempted = _prefs!.getInt('lw_quiz_attempted') ?? 0;
+    quizTotalCorrect = _prefs!.getInt('lw_quiz_correct') ?? 0;
 
     await loadChapter(
       book: currentBook,
@@ -99,50 +121,18 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _seedInitialBlueprintState() {
-    final nowMs = DateTime.now().millisecondsSinceEpoch;
-    final todayStr = _todayIsoString();
-    streakDays = 14;
-    lastActiveDate = todayStr;
-    xp = 450;
+  void _resetToZeroState() {
+    streakDays = 0;
+    lastActiveDate = '';
+    xp = 0;
+    quizTotalAttempted = 0;
+    quizTotalCorrect = 0;
+    currentQuizStreak = 0;
     activeVersion = 'WEB';
     currentBook = 'John';
-    currentChapter = 3;
-    annotations = {
-      'John:3:16': VerseAnnotation(
-        id: 'John:3:16',
-        book: 'John',
-        chapter: 3,
-        verse: 16,
-        colorHex: '#FDE68A', // Warm Yellow highlight matching Page 2 mockup
-        note: "God's sacrificial unconditional love for humanity",
-        isBookmarked: true,
-        updatedAtMs: nowMs,
-      ),
-      'Philippians:4:13': VerseAnnotation(
-        id: 'Philippians:4:13',
-        book: 'Philippians',
-        chapter: 4,
-        verse: 13,
-        colorHex: '#BBF7D0', // Soft Green highlight
-        note: 'Strength for every season through Christ',
-        isBookmarked: true,
-        updatedAtMs: nowMs,
-      ),
-      'Psalms:46:10': VerseAnnotation(
-        id: 'Psalms:46:10',
-        book: 'Psalms',
-        chapter: 46,
-        verse: 10,
-        colorHex: '#BFDBFE', // Calm Blue highlight
-        isBookmarked: true,
-        updatedAtMs: nowMs,
-      ),
-    };
-    completedPlanDays = {
-      '30_days_of_peace': List.generate(13, (i) => i + 1), // Day 14/30 next!
-      'gospels_in_30_days': [1, 2, 3, 4],
-    };
+    currentChapter = 1;
+    annotations = {};
+    completedPlanDays = {};
     answeredQuizIds = [];
     umpConsentStatus = 'personalized';
   }
@@ -183,10 +173,20 @@ class AppState extends ChangeNotifier {
     return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
   }
 
+  void _recordDailyActivity() {
+    final today = _todayIsoString();
+    if (lastActiveDate != today) {
+      streakDays++;
+      lastActiveDate = today;
+    }
+  }
+
   /// Step 1 of Sync Blueprint: Always save immediately to local storage first (100% offline-first).
   Future<void> _persistLocalState() async {
     final payload = buildSyncPayload();
-    await _prefs?.setString('lw_user_sync_payload_v2', payload.toJsonString());
+    await _prefs?.setString('lw_user_sync_payload_v3', payload.toJsonString());
+    await _prefs?.setInt('lw_quiz_attempted', quizTotalAttempted);
+    await _prefs?.setInt('lw_quiz_correct', quizTotalCorrect);
     pendingSyncChanges++;
     _scheduleDebouncedGoogleDriveSync();
   }
@@ -209,8 +209,7 @@ class AppState extends ChangeNotifier {
 
     await Future<void>.delayed(const Duration(milliseconds: 650));
 
-    // Read simulated/stored remote Google Drive `appDataFolder/user_bible_sync.json`
-    final remoteRaw = _prefs?.getString('lw_gdrive_appdata_remote_json');
+    final remoteRaw = _prefs?.getString('lw_gdrive_appdata_remote_v3');
     final localPayload = buildSyncPayload();
     UserSyncPayload mergedPayload = localPayload;
 
@@ -225,17 +224,29 @@ class AppState extends ChangeNotifier {
     }
 
     final mergedJson = mergedPayload.toJsonString();
-    await _prefs?.setString('lw_gdrive_appdata_remote_json', mergedJson);
-    await _prefs?.setString('lw_user_sync_payload_v2', mergedJson);
+    await _prefs?.setString('lw_gdrive_appdata_remote_v3', mergedJson);
+    await _prefs?.setString('lw_user_sync_payload_v3', mergedJson);
 
     pendingSyncChanges = 0;
-    lastBackupLabel = 'Just now';
+    lastBackupLabel = 'Synced just now';
     isSyncingDrive = false;
     notifyListeners();
   }
 
   void setTabIndex(int index) {
     currentTabIndex = index;
+    notifyListeners();
+  }
+
+  Future<void> adjustReaderFontSize(double delta) async {
+    readerFontSize = (readerFontSize + delta).clamp(13.0, 24.0);
+    await _prefs?.setDouble('lw_reader_font_size', readerFontSize);
+    notifyListeners();
+  }
+
+  Future<void> setReaderThemeMode(String mode) async {
+    readerThemeMode = mode;
+    await _prefs?.setString('lw_reader_theme', mode);
     notifyListeners();
   }
 
@@ -250,15 +261,15 @@ class AppState extends ChangeNotifier {
 
   Future<void> toggleGoogleSignIn() async {
     isSignedInWithGoogle = !isSignedInWithGoogle;
-    await _prefs?.setBool('lw_google_signed_in', isSignedInWithGoogle);
+    await _prefs?.setBool('lw_google_signed_in_v3', isSignedInWithGoogle);
     if (isSignedInWithGoogle && isPhoneOnline) {
       await syncNowWithGoogleDrive();
+    } else if (!isSignedInWithGoogle) {
+      lastBackupLabel = 'Signed out (Local storage active)';
     }
     notifyListeners();
   }
 
-  /// Implements Blueprint v2.0 Fix #6:
-  /// Dwell-time + 4-minute cooldown check before showing a full-screen interstitial ad.
   bool canShowInterstitialWithCooldown() {
     if (!isPhoneOnline) return false;
     if (lastInterstitialShownAt == null) return true;
@@ -284,12 +295,14 @@ class AppState extends ChangeNotifier {
     isLoadingChapter = true;
     notifyListeners();
 
-    // Blueprint v2.0 Fix #6: Only increment chaptersReadCount if user stayed >= 15s
-    // (or when testing explicit chapter navigation after reading)
-    if (countForAd && dwellTime.inSeconds >= 15) {
-      chaptersReadCount++;
-      if (chaptersReadCount % 4 == 0 && canShowInterstitialWithCooldown()) {
-        _triggerInterstitialAd('Chapter Transition (Every 4th Read Chapter)');
+    if (countForAd) {
+      _recordDailyActivity();
+      if (dwellTime.inSeconds >= 15) {
+        chaptersReadCount++;
+        xp += 5;
+        if (chaptersReadCount % 4 == 0 && canShowInterstitialWithCooldown()) {
+          _triggerInterstitialAd('Chapter Transition (Every 4th Read Chapter)');
+        }
       }
     }
 
@@ -310,8 +323,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Allows testing or triggering the controlled full-screen interstitial ad
-  /// (after saving/sharing a Verse Image OR every 4th read chapter when online).
   void _triggerInterstitialAd(String reason) {
     if (!isPhoneOnline) return;
     lastInterstitialShownAt = DateTime.now();
@@ -348,6 +359,7 @@ class AppState extends ChangeNotifier {
     required int verse,
     required String? colorHex,
   }) async {
+    _recordDailyActivity();
     final key = _annotationKey(book, chapter, verse);
     final existing = annotations[key];
     final updated = (existing ??
@@ -378,6 +390,7 @@ class AppState extends ChangeNotifier {
     required int chapter,
     required int verse,
   }) async {
+    _recordDailyActivity();
     final key = _annotationKey(book, chapter, verse);
     final existing = annotations[key];
     final nextBookmarked = !(existing?.isBookmarked ?? false);
@@ -409,6 +422,7 @@ class AppState extends ChangeNotifier {
     required int verse,
     required String noteText,
   }) async {
+    _recordDailyActivity();
     final key = _annotationKey(book, chapter, verse);
     final existing = annotations[key];
     final cleaned = noteText.trim();
@@ -436,6 +450,7 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> markPlanDayCompleted(String planId, int day) async {
+    _recordDailyActivity();
     final list = List<int>.from(completedPlanDays[planId] ?? const []);
     if (list.contains(day)) {
       list.remove(day);
@@ -454,19 +469,20 @@ class AppState extends ChangeNotifier {
     required bool isCorrect,
     required int earnedXp,
   }) async {
+    _recordDailyActivity();
+    quizTotalAttempted++;
     if (isCorrect) {
+      quizTotalCorrect++;
+      currentQuizStreak++;
       xp += earnedXp;
       if (!answeredQuizIds.contains(questionId)) {
         answeredQuizIds.add(questionId);
       }
-      final today = _todayIsoString();
-      if (lastActiveDate != today) {
-        streakDays++;
-        lastActiveDate = today;
-      }
-      await _persistLocalState();
-      notifyListeners();
+    } else {
+      currentQuizStreak = 0;
     }
+    await _persistLocalState();
+    notifyListeners();
   }
 
   Future<void> downloadBibleVersion(String versionCode) async {
@@ -508,19 +524,15 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Implements Blueprint v2.0 Fix #7:
-  /// Google Play Mandatory In-App Account & Cloud Data Deletion.
   Future<void> deleteAllCloudAndLocalData() async {
     _debounceSyncTimer?.cancel();
-    await _prefs?.remove('lw_user_sync_payload_v2');
-    await _prefs?.remove('lw_gdrive_appdata_remote_json');
-    annotations.clear();
-    completedPlanDays.clear();
-    answeredQuizIds.clear();
-    streakDays = 1;
-    xp = 0;
+    await _prefs?.remove('lw_user_sync_payload_v3');
+    await _prefs?.remove('lw_gdrive_appdata_remote_v3');
+    await _prefs?.remove('lw_quiz_attempted');
+    await _prefs?.remove('lw_quiz_correct');
+    _resetToZeroState();
     pendingSyncChanges = 0;
-    lastBackupLabel = 'Deleted';
+    lastBackupLabel = 'All data reset to 0';
     notifyListeners();
   }
 
