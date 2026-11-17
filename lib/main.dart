@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/reader_screen.dart';
+import 'screens/terms_onboarding_screen.dart';
 import 'screens/verse_art_studio_screen.dart';
 import 'screens/versions_backup_screen.dart';
 import 'state/app_state.dart';
@@ -52,7 +53,9 @@ class _LightWordBibleAppState extends State<LightWordBibleApp> {
             ),
           ),
           home: _appState.isInitialized
-              ? MainShellScreen(appState: _appState)
+              ? (_appState.hasAcceptedTerms
+                  ? MainShellScreen(appState: _appState)
+                  : TermsOnboardingScreen(appState: _appState))
               : Scaffold(
                   backgroundColor: const Color(0xFF0F172A),
                   body: Center(

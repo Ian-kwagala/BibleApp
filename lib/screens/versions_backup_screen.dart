@@ -540,7 +540,7 @@ class VersionsBackupScreen extends StatelessWidget {
           ),
           const SizedBox(height: 18),
 
-          // Play Store Data Safety & UMP Consent Section (Blueprint v2.0 Fix #7)
+          // Play Store Legal, Terms, UMP Consent & Data Safety Section
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -552,20 +552,92 @@ class VersionsBackupScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Privacy, Google UMP Consent & Data Safety',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF1E293B),
-                  ),
+                const Row(
+                  children: [
+                    Icon(
+                      Icons.verified_user_rounded,
+                      size: 19,
+                      color: Color(0xFF1E3A8A),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Legal, Terms, UMP Consent & Play Store Data Safety',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF1E293B),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 6),
-                const Text(
-                  'Manage your Google AdMob UMP consent preferences (GDPR/CCPA) or permanently delete your cloud & local data.',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                Text(
+                  'Terms & Privacy Accepted: ${appState.termsAcceptedAtIso ?? "Confirmed"} • App Version 2.0.0+2',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF059669),
+                  ),
                 ),
                 const SizedBox(height: 12),
+
+                // Legal Documents Grid: Terms, Privacy, Copyrights, OSS Licenses
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: () =>
+                          showLegalDocumentModal(context, docType: 'terms'),
+                      icon: const Icon(Icons.description_outlined, size: 16),
+                      label: const Text('Terms & Conditions'),
+                      style: OutlinedButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () =>
+                          showLegalDocumentModal(context, docType: 'privacy'),
+                      icon: const Icon(Icons.privacy_tip_outlined, size: 16),
+                      label: const Text('Privacy Policy'),
+                      style: OutlinedButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () => showLegalDocumentModal(
+                        context,
+                        docType: 'copyright',
+                      ),
+                      icon: const Icon(Icons.menu_book_outlined, size: 16),
+                      label: const Text('Public Domain Licenses'),
+                      style: OutlinedButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        showLicensePage(
+                          context: context,
+                          applicationName: 'LightWord Bible',
+                          applicationVersion: '2.0.0+2',
+                          applicationLegalese:
+                              '© 2026 LightWord Bible • Public Domain Scriptures (WEB, KJV, BBE, ASV, YLT, Darby, RVR, APEE)',
+                        );
+                      },
+                      icon: const Icon(Icons.code_rounded, size: 16),
+                      label: const Text('Open-Source Licenses'),
+                      style: OutlinedButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Divider(height: 1),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -597,7 +669,26 @@ class VersionsBackupScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => appState.reopenTermsAgreementScreen(),
+                    icon: const Icon(
+                      Icons.fact_check_outlined,
+                      size: 17,
+                      color: Color(0xFF1E3A8A),
+                    ),
+                    label: const Text(
+                      'Review / Re-Confirm Terms & Consent Screen',
+                      style: TextStyle(
+                        color: Color(0xFF1E3A8A),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(

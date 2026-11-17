@@ -12,6 +12,8 @@ class AppState extends ChangeNotifier {
   SharedPreferences? _prefs;
 
   bool isInitialized = false;
+  bool hasAcceptedTerms = false;
+  String? termsAcceptedAtIso;
   int currentTabIndex = 0; // 0: Home, 1: Read, 2: Quiz, 3: Versions, 4: Art Studio
 
   // Reader state
@@ -103,6 +105,8 @@ class AppState extends ChangeNotifier {
       await _persistLocalState();
     }
 
+    hasAcceptedTerms = _prefs!.getBool('lw_accepted_terms_v3') ?? false;
+    termsAcceptedAtIso = _prefs!.getString('lw_accepted_terms_date_v3');
     isPhoneOnline = _prefs!.getBool('lw_is_online') ?? true;
     isSignedInWithGoogle = _prefs!.getBool('lw_google_signed_in_v3') ?? false;
     readerFontSize = _prefs!.getDouble('lw_reader_font_size') ?? 16.5;
@@ -118,6 +122,22 @@ class AppState extends ChangeNotifier {
     );
 
     isInitialized = true;
+    notifyListeners();
+  }
+
+  Future<void> acceptTermsAndConditions({required String umpChoice}) async {
+    hasAcceptedTerms = true;
+    termsAcceptedAtIso = _todayIsoString();
+    umpConsentStatus = umpChoice;
+    await _prefs?.setBool('lw_accepted_terms_v3', true);
+    await _prefs?.setString('lw_accepted_terms_date_v3', termsAcceptedAtIso!);
+    await _persistLocalState();
+    notifyListeners();
+  }
+
+  Future<void> reopenTermsAgreementScreen() async {
+    hasAcceptedTerms = false;
+    await _prefs?.setBool('lw_accepted_terms_v3', false);
     notifyListeners();
   }
 

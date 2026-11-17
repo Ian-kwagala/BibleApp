@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LightWord Bible App — Account &amp; Data Deletion Instructions</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #FAF7F2;
+      color: #1E293B;
+      line-height: 1.65;
+      margin: 0;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      padding: 2.5rem;
+      border-radius: 16px;
+      border: 1px solid #E2E8F0;
+    }
+    h1 { color: #DC2626; margin-top: 0; }
+    h2 { color: #1E3A8A; margin-top: 1.5rem; }
+    .step-box {
+      background: #FEF2F2;
+      border-left: 4px solid #DC2626;
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>LightWord Bible — Account &amp; Cloud Data Deletion</h1>
+    <p>
+      In accordance with Google Play Store Data Safety requirements, LightWord Bible provides instant, self-service deletion of both your local app data and your optional Google Drive personal backup (<code>user_bible_sync.json</code>).
+    </p>
+
+    <h2>Option 1: Instant In-App Deletion (Recommended)</h2>
+    <div class="step-box">
+      <ol>
+        <li>Open the <strong>LightWord Bible</strong> app on your device.</li>
+        <li>Tap the <strong>Versions</strong> (Cloud Backup) tab in the bottom navigation bar.</li>
+        <li>Scroll to the <strong>Privacy, Legal &amp; Data Safety</strong> section.</li>
+        <li>Tap <strong>"Delete Cloud &amp; Local Data"</strong> and confirm.</li>
+      </ol>
+    </div>
+    <p>
+      <strong>What gets deleted immediately:</strong> Your hidden <code>user_bible_sync.json</code> file inside Google Drive <code>appDataFolder</code>, all verse highlights, study notes, bookmarks, reading plan progress, XP points, and daily streaks (resetting all data to 0).
+    </p>
+
+    <h2>Option 2: Delete Directly From Your Google Account (Without the App)</h2>
+    <p>
+      Because LightWord Bible uses zero developer servers and stores your backup inside your own Google Drive hidden <code>appDataFolder</code>, you can also delete LightWord Bible's hidden data directly from Google Drive on the web:
+    </p>
+    <ol>
+      <li>Go to <a href="https://drive.google.com">drive.google.com</a> and click the <strong>Settings gear icon &rarr; Settings</strong>.</li>
+      <li>Select <strong>Manage Apps</strong> in the left sidebar.</li>
+      <li>Locate <strong>LightWord Bible</strong>, click <strong>Options</strong>, and select <strong>Delete hidden app data</strong> or <strong>Disconnect from Drive</strong>.</li>
+    </ol>
+  </div>
+</body>
+</html>
